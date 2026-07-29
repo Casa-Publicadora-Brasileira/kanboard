@@ -26,8 +26,6 @@
         <div class="task-form-secondary-column">
             <?= $this->task->renderDueDateField($values, $errors) ?>
             <?= $this->task->renderStartDateField($values, $errors) ?>
-            <?= $this->task->renderTimeEstimatedField($values, $errors) ?>
-            <?= $this->task->renderTimeSpentField($values, $errors) ?>
             <?= $this->task->renderScoreField($values, $errors) ?>
             <?= $this->task->renderReferenceField($values, $errors) ?>
 
