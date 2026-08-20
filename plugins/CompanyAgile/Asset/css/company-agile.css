@@ -221,6 +221,85 @@ html.company-agile #dashboard .task-list-subtasks[data-pm-compact="true"] .subta
     .ca-management-clear-filters { margin-left: 0; }
 }
 
+/* Definitive server-rendered Board and My Tasks presentation. */
+html.company-agile #board,
+html.company-agile #board-container { color-scheme: light; color: var(--ca-text) !important; background: var(--ca-bg) !important; }
+html.company-agile #board th,
+html.company-agile #board td,
+html.company-agile #board .board-column-expanded,
+html.company-agile #board .board-column-collapsed { color: var(--ca-text) !important; background-color: transparent !important; }
+html.company-agile #board .ca-board-card { color-scheme: light; color: var(--ca-text) !important; background: #fff !important; }
+html.company-agile .ca-board-card-footer { position: relative; min-height: 26px; padding-right: 34px; }
+html.company-agile .ca-card-assignee-server { position: absolute; right: 0; bottom: 0; display: inline-flex !important; margin: 0; }
+html.company-agile .ca-card-assignee-server .task-board-avatars { display: block; }
+
+html.company-agile .pm-my-tasks { gap: 14px; color: var(--ca-text); background: transparent !important; }
+html.company-agile .pm-my-tasks > header.pm-my-tasks-header { display: block !important; min-height: 0; margin: 0; padding: 0 0 13px; border: 0; border-bottom: 1px solid var(--ca-border); color: var(--ca-text) !important; background: transparent !important; box-shadow: none !important; text-align: left; }
+html.company-agile .pm-my-tasks-header > span { display: block; margin: 0; color: var(--ca-primary) !important; background: transparent !important; }
+html.company-agile .pm-my-tasks-header h1 { margin: 3px 0 4px; color: var(--ca-text) !important; background: transparent !important; font-size: 25px; line-height: 1.2; }
+html.company-agile .pm-my-tasks-header p { display: block; margin: 0; color: var(--ca-text-muted) !important; background: transparent !important; }
+html.company-agile .pm-my-tasks-toolbar { padding: 13px 14px; border: 1px solid var(--ca-border); border-radius: 10px; background: #fff !important; box-shadow: var(--ca-shadow-sm); }
+html.company-agile .pm-task-metrics { gap: 8px; }
+html.company-agile .pm-task-metrics article { min-height: 62px; padding: 10px 13px; border-radius: 9px; background: #fff !important; box-shadow: none; }
+html.company-agile .pm-task-metrics strong { font-size: 20px; }
+html.company-agile .pm-task-metrics span { margin-top: 5px; }
+html.company-agile .pm-task-facets { gap: 9px; padding: 12px 14px; background: #fff !important; box-shadow: none; }
+html.company-agile .pm-task-facets section { grid-template-columns: 112px minmax(0,1fr); gap: 9px; }
+html.company-agile .pm-task-facets h2 { margin-top: 6px; }
+html.company-agile .pm-attention > header,
+html.company-agile .pm-assigned-work > header { min-height: 0; margin: 0 0 9px; padding: 2px 0 8px; border: 0; border-bottom: 1px solid var(--ca-border); color: var(--ca-text) !important; background: transparent !important; box-shadow: none !important; }
+html.company-agile .pm-attention > header h2,
+html.company-agile .pm-assigned-work > header h2 { color: var(--ca-text) !important; background: transparent !important; }
+html.company-agile .pm-attention > header p,
+html.company-agile .pm-assigned-work > header p { margin: 3px 0 0; color: var(--ca-text-muted) !important; background: transparent !important; font-size: 10.5px; }
+html.company-agile .pm-assigned-work > header > span { display: inline-flex; min-height: 26px; padding: 0 9px; align-items: center; border-radius: 13px; color: var(--ca-text-secondary); background: var(--ca-surface-muted) !important; font-size: 10px; font-weight: 700; }
+html.company-agile .pm-attention > div { gap: 8px; }
+html.company-agile .pm-attention-card { min-height: 72px; padding: 10px 11px; border: 1px solid var(--ca-border); border-left: 3px solid #f5cd47; color: var(--ca-text) !important; background: #fffefa !important; box-shadow: none; }
+html.company-agile .pm-attention-card.pm-attention-high { border-left-color: #f07b4f; }
+html.company-agile .pm-attention-card.pm-attention-overdue { border-left-color: var(--ca-danger); }
+html.company-agile .pm-attention-card > span { align-self: flex-start; padding: 2px 6px; border-radius: 9px; color: #7f5f01; background: #fff1b8 !important; }
+html.company-agile .pm-attention-card.pm-attention-high > span { color: #974f0c; background: #ffede2 !important; }
+html.company-agile .pm-attention-card.pm-attention-overdue > span { color: #ae2a19; background: #ffebe6 !important; }
+html.company-agile .pm-attention-card strong { display: flex; min-width: 0; gap: 5px; align-items: baseline; }
+html.company-agile .pm-attention-card strong b { flex: 0 0 auto; color: var(--ca-primary); font-size: 9.5px; }
+html.company-agile .pm-project-group { margin: 0 0 16px; border: 1px solid #cfd6e0; border-radius: 11px; background: #fff !important; box-shadow: 0 2px 7px rgba(9,30,66,.06); overflow: hidden; }
+html.company-agile .pm-project-group > summary { position: relative; min-height: 46px; padding: 0 16px 0 38px; color: var(--ca-text) !important; background: #f7f8fa !important; border-bottom: 1px solid transparent; cursor: pointer; list-style: none; }
+html.company-agile .pm-project-group > summary::-webkit-details-marker { display: none; }
+html.company-agile .pm-project-group > summary::before { position: absolute; left: 16px; top: 50%; content: "\f054"; color: var(--ca-text-muted); font: normal normal normal 11px/1 FontAwesome; transform: translateY(-50%); transition: transform .15s ease; }
+html.company-agile .pm-project-group[open] > summary::before { transform: translateY(-50%) rotate(90deg); }
+html.company-agile .pm-project-group > summary strong { font-size: 13px; font-weight: 750; }
+html.company-agile .pm-project-group > summary span { min-width: 25px; height: 25px; color: var(--ca-text-secondary); background: #e9edf3 !important; font-weight: 750; }
+html.company-agile .pm-project-group[open] > summary { border-bottom-color: var(--ca-border); }
+html.company-agile .pm-project-group > div { display: block; padding: 12px 16px 16px; }
+html.company-agile .pm-column-group { padding: 5px 0 10px; }
+html.company-agile .pm-column-group + .pm-column-group { margin-top: 8px; padding-top: 14px; border-top: 1px solid #e5e9ef; }
+html.company-agile .pm-column-group > header { display: flex; min-height: 28px; margin: 0 0 8px; padding: 0 2px 5px; align-items: center; justify-content: flex-start; gap: 7px; border-bottom: 1px solid #edf0f4; color: var(--ca-text-secondary) !important; background: transparent !important; }
+html.company-agile .pm-column-group h3 { margin: 0; color: var(--ca-text-secondary); font-size: 10px; font-weight: 800; letter-spacing: .055em; text-transform: uppercase; }
+html.company-agile .pm-column-group > header span { display: inline-grid; min-width: 19px; height: 19px; place-items: center; border-radius: 10px; color: var(--ca-text-muted); background: #f1f3f6; font-size: 9px; font-weight: 750; }
+html.company-agile .pm-column-group > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
+html.company-agile .pm-task-card { min-height: 64px; padding: 9px 11px; border: 1px solid #d9dfe7; border-radius: 9px; background: #fff !important; box-shadow: 0 1px 2px rgba(9,30,66,.04); transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease; cursor: pointer; }
+html.company-agile .pm-task-card:hover { border-color: #85b8ff; background: #fbfdff !important; box-shadow: 0 3px 8px rgba(9,30,66,.09); transform: translateY(-1px); }
+html.company-agile .pm-task-card:focus-visible { outline: 3px solid rgba(12,102,228,.24); outline-offset: 2px; border-color: var(--ca-primary); }
+html.company-agile .pm-task-card > strong { margin: 2px 0 4px; }
+
+html.company-agile .ca-sidebar a[aria-current="page"] { cursor: default; }
+
+@media (max-width: 1280px) {
+    html.company-agile .pm-attention > div,
+    html.company-agile .pm-column-group > div { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 1024px) {
+    html.company-agile .pm-attention > div,
+    html.company-agile .pm-column-group > div { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    html.company-agile .pm-my-tasks-toolbar { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+    html.company-agile .pm-attention > div,
+    html.company-agile .pm-column-group > div,
+    html.company-agile .pm-my-tasks-toolbar,
+    html.company-agile .pm-task-facets section { grid-template-columns: minmax(0,1fr); }
+}
+
 /* Portal Management form controls: one accessible visual language globally. */
 html.company-agile input[type="checkbox"],
 html.company-agile input[type="radio"] {

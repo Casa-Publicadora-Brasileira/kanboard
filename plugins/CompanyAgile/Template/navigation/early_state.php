@@ -1,1 +1,1 @@
-<script>document.documentElement.classList.add('company-agile');</script>
+<?php // Portal state is rendered directly by companyAgile:layout before the first paint. ?>

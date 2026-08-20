@@ -56,4 +56,5 @@ return array(
     'CompanyAgile: By project' => 'Por projeto', 'CompanyAgile: Current workflow' => 'Fluxo atual', 'CompanyAgile: Needs attention' => 'Precisa de atenção', 'CompanyAgile: Due soon' => 'Vence em breve', 'CompanyAgile: All assigned tasks' => 'Todas as tarefas atribuídas',
     'CompanyAgile: Check the highlighted fields.' => 'Confira os campos destacados.', 'CompanyAgile: Issue type is required.' => 'O tipo de tarefa é obrigatório.',
     'CompanyAgile: No project selected' => 'Nenhum projeto selecionado', 'CompanyAgile: Project settings' => 'Configurações do projeto', 'CompanyAgile: General settings' => 'Configurações gerais',
+    'CompanyAgile: Tasks requiring priority or deadline attention' => 'Tarefas com prioridade ou prazo que merecem atenção', 'CompanyAgile: Tasks grouped by project and workflow' => 'Tarefas agrupadas por projeto e etapa do fluxo', 'CompanyAgile: tasks' => 'tarefas',
 );

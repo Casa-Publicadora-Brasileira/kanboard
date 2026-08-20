@@ -572,6 +572,38 @@
         return controller ? controller + ':' + action : url.pathname.replace(/\/$/, '').toLowerCase();
     }
 
+    function normalizedNavigationUrl(value) {
+        var url;
+        try { url = new URL(value, window.location.href); } catch (ignore) { return ''; }
+        if (url.origin !== window.location.origin) return '';
+        var pathname = url.pathname.replace(/\/{2,}/g, '/');
+        if (pathname.length > 1) pathname = pathname.replace(/\/$/, '');
+        var parameters = [];
+        url.searchParams.forEach(function (parameterValue, parameterName) {
+            parameters.push([parameterName, parameterValue]);
+        });
+        parameters.sort(function (left, right) {
+            return left[0] === right[0] ? left[1].localeCompare(right[1]) : left[0].localeCompare(right[0]);
+        });
+        var query = new URLSearchParams();
+        parameters.forEach(function (parameter) { query.append(parameter[0], parameter[1]); });
+        return pathname + (query.toString() ? '?' + query.toString() : '');
+    }
+
+    function initializeIdempotentSidebarNavigation() {
+        if (document.documentElement.getAttribute('data-ca-idempotent-navigation') === 'ready') return;
+        document.documentElement.setAttribute('data-ca-idempotent-navigation', 'ready');
+        document.addEventListener('click', function (event) {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            var link = event.target.closest('.ca-sidebar a[href]');
+            if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+            var target = normalizedNavigationUrl(link.href);
+            if (!target || target !== normalizedNavigationUrl(window.location.href)) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }, true);
+    }
+
     function initializeInternalNavigation(section) {
         var sidebar = section.querySelector(':scope > .sidebar');
         if (!sidebar) return;
@@ -1423,6 +1455,34 @@
         return match ? match[1] : '';
     }
 
+    function isTaskViewLink(link) {
+        if (!link || link.matches('.ca-open-full-task') || link.hasAttribute('download') || link.target === '_blank') return false;
+        var href = link.getAttribute('href') || '';
+        if (!href || href.charAt(0) === '#') return false;
+        if (link.matches('.ca-task-link, .ca-management-task-link, .pm-task-card, .pm-attention-card, .ca-backlog-title')) return getTaskIdFromLink(link) !== '';
+        var url;
+        try { url = new URL(href, window.location.href); } catch (ignore) { return false; }
+        var controller = (url.searchParams.get('controller') || '').toLowerCase();
+        var action = (url.searchParams.get('action') || 'show').toLowerCase();
+        return (/\/task\/\d+\/?$/i.test(url.pathname) || (controller === 'taskviewcontroller' && action === 'show')) && getTaskIdFromLink(link) !== '';
+    }
+
+    function initializeCanonicalTaskNavigation(panelController) {
+        if (!panelController || document.documentElement.getAttribute('data-ca-task-navigation') === 'ready') return;
+        document.documentElement.setAttribute('data-ca-task-navigation', 'ready');
+        document.addEventListener('click', function (event) {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            var link = event.target.closest('a[href]');
+            if (!isTaskViewLink(link)) return;
+            var taskId = getTaskIdFromLink(link);
+            var sidebar = document.querySelector('.ca-sidebar');
+            if (!taskId || !sidebar) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            panelController.open(sidebar.getAttribute('data-ca-panel-url').replace('__TASK_ID__', taskId), link.href);
+        }, true);
+    }
+
     function initializeLegacySurfaceAdapters() {
         var userTrigger = document.querySelector('body > header .menus-container .dropdown:last-child > .dropdown-menu');
         if (userTrigger) {
@@ -1441,7 +1501,7 @@
             row.appendChild(progress);
         });
 
-        if (document.querySelector('#task-view')) document.body.classList.add('ca-full-task-view');
+        if (document.querySelector('#task-view')) document.documentElement.classList.add('ca-full-task-view');
         var taskSidebar = document.querySelector('#task-view > .sidebar > ul');
         if (taskSidebar && !document.querySelector('.ca-task-action-bar')) {
             var actionBar = document.createElement('nav');
@@ -1617,6 +1677,7 @@
         if (!document.querySelector('.ca-sidebar')) return;
         document.documentElement.classList.add('company-agile');
         initializeNavigation();
+        initializeIdempotentSidebarNavigation();
         initializeProjectSettingsNavigation();
         initializeProjectPicker();
         suppressNativeProjectPicker();
@@ -1635,15 +1696,6 @@
         initializeDashboardSubtasks();
         restoreFilterScroll();
         var clearBoardFilters = initializeBoardFilters();
-        document.querySelectorAll('.task-board').forEach(function (card) {
-            var avatar = card.querySelector('.task-board-header .task-board-avatar');
-            var footer = card.querySelector('.task-board-icons-row:last-child');
-            if (avatar && footer) {
-                avatar.classList.add('ca-card-assignee');
-                footer.appendChild(avatar);
-            }
-        });
-
         var panelController = createOverlayController({
             dialog: '[data-ca-task-panel]', backdrop: '[data-ca-panel-backdrop]', body: '[data-ca-panel-body]',
             closeSelector: '[data-ca-panel-close]', openClass: 'ca-panel-open', history: true
@@ -1652,18 +1704,9 @@
             dialog: '[data-ca-quick-dialog]', backdrop: '[data-ca-quick-backdrop]', body: '[data-ca-quick-body]',
             closeSelector: '[data-ca-quick-close]', openClass: 'ca-quick-open', history: false
         });
+        initializeCanonicalTaskNavigation(panelController);
 
         document.addEventListener('click', function (event) {
-            var taskLink = event.target.closest('.task-board-title a, .ca-backlog-title, .task-list a[href*="task_id"], .table-list-row a[href*="task_id"], .activity-event a[href*="task_id"], .task-links-table a[href*="task_id"], .ca-relation-item a, .ca-epic-stories a[href*="task_id"], .ca-management-task-link, .pm-task-card, .pm-attention-card');
-            if (taskLink && !taskLink.matches('.ca-open-full-task, .js-modal-small, .js-modal-medium, .js-modal-large') && panelController && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
-                var taskId = getTaskIdFromLink(taskLink);
-                var sidebar = document.querySelector('.ca-sidebar');
-                if (taskId && sidebar) {
-                    event.preventDefault();
-                    panelController.open(sidebar.getAttribute('data-ca-panel-url').replace('__TASK_ID__', taskId), taskLink.href);
-                }
-            }
-
             var quickButton = event.target.closest('[data-ca-quick-create-url]');
             if (quickButton && quickController) {
                 event.preventDefault();

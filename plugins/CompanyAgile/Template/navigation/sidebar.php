@@ -65,7 +65,6 @@
 </aside>
 <div class="ca-panel-backdrop" data-ca-panel-backdrop hidden></div>
 <aside class="ca-task-panel" data-ca-task-panel role="dialog" aria-modal="true" aria-labelledby="ca-task-panel-title" hidden>
-    <div class="ca-panel-loading" data-ca-panel-loading><i class="fa fa-circle-o-notch fa-spin"></i><span><?= t('CompanyAgile: Loading task') ?></span></div>
     <div data-ca-panel-body></div>
 </aside>
 <div class="ca-quick-backdrop" data-ca-quick-backdrop hidden></div>

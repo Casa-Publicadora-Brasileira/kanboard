@@ -56,4 +56,5 @@ return array(
     'CompanyAgile: By project' => 'By project', 'CompanyAgile: Current workflow' => 'Current workflow', 'CompanyAgile: Needs attention' => 'Needs attention', 'CompanyAgile: Due soon' => 'Due soon', 'CompanyAgile: All assigned tasks' => 'All assigned tasks',
     'CompanyAgile: Check the highlighted fields.' => 'Check the highlighted fields.', 'CompanyAgile: Issue type is required.' => 'The issue type is required.',
     'CompanyAgile: No project selected' => 'No project selected', 'CompanyAgile: Project settings' => 'Project settings', 'CompanyAgile: General settings' => 'General settings',
+    'CompanyAgile: Tasks requiring priority or deadline attention' => 'Tasks requiring priority or deadline attention', 'CompanyAgile: Tasks grouped by project and workflow' => 'Tasks grouped by project and workflow stage', 'CompanyAgile: tasks' => 'tasks',
 );

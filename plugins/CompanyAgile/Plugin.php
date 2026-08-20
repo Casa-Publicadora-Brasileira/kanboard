@@ -54,7 +54,8 @@ class Plugin extends Base
         $this->hook->on('template:layout:js', array(
             'template' => 'plugins/CompanyAgile/Asset/js/company-agile.js',
         ));
-        $this->template->hook->attach('template:layout:head', 'companyAgile:navigation/early_state');
+        $this->template->setTemplateOverride('layout', 'companyAgile:layout');
+        $this->template->setTemplateOverride('board/task_private', 'companyAgile:board/task_private');
         $this->template->setTemplateOverride('config/layout', 'companyAgile:config/layout');
         $this->template->setTemplateOverride('project/layout', 'companyAgile:project/layout');
         $this->template->hook->attachCallable(
