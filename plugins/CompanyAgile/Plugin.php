@@ -59,6 +59,8 @@ class Plugin extends Base
         $this->template->setTemplateOverride('task_modification/show', 'companyAgile:task/edit');
         $this->template->setTemplateOverride('comment/create', 'companyAgile:comment/create');
         $this->template->setTemplateOverride('comment/edit', 'companyAgile:comment/edit');
+        $this->template->setTemplateOverride('comment/show', 'companyAgile:comment/show');
+        $this->template->setTemplateOverride('event/events', 'companyAgile:event/events');
         $this->template->setTemplateOverride('task_file/create', 'companyAgile:task_file/create');
         $this->template->setTemplateOverride('subtask/create', 'companyAgile:subtask/create');
         $this->template->setTemplateOverride('subtask/edit', 'companyAgile:subtask/edit');

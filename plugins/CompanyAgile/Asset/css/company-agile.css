@@ -2070,6 +2070,64 @@ html.company-agile .table-list-row .tooltip .tooltip-content { display: none !im
 .ca-advanced-search > div { display: flex; flex-wrap: wrap; gap: 7px; }
 .ca-advanced-search input[type="text"] { min-width: min(520px,100%); height: 36px; flex: 1; margin: 0; padding: 0 10px; border: 1px solid var(--ca-border); border-radius: 7px; box-sizing: border-box; }
 .ca-active-filter-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: -8px 0 15px; padding: 0 3px; }
+
+/* Native swimlane board geometry. The Kanboard table remains the DnD source of truth. */
+html.company-agile #board-container:has(#board .board-swimlane-header) { max-width: 100%; padding-bottom: 16px; overflow-x: auto; overflow-y: visible; scrollbar-color: #b6c2cf transparent; scrollbar-width: thin; }
+html.company-agile #board-container:has(#board .board-swimlane-header)::-webkit-scrollbar { height: 9px; }
+html.company-agile #board-container:has(#board .board-swimlane-header)::-webkit-scrollbar-track { background: transparent; }
+html.company-agile #board-container:has(#board .board-swimlane-header)::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 9px; background: #b6c2cf; background-clip: padding-box; }
+html.company-agile #board:has(.board-swimlane-header) { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 8px 0; table-layout: fixed; }
+html.company-agile #board:has(.board-swimlane-header) th.board-column-header,
+html.company-agile #board:has(.board-swimlane-header) td { width: var(--ca-column-width); min-width: var(--ca-column-width); max-width: var(--ca-column-width); box-sizing: border-box; }
+html.company-agile #board:has(.board-swimlane-header) tr[id^="swimlane-"] > th.board-swimlane-header { position: static !important; width: auto !important; min-width: 0 !important; max-width: none !important; height: 44px; padding: 0 14px !important; border: 0 !important; border-top: 12px solid transparent !important; border-bottom: 1px solid var(--ca-border) !important; border-radius: 0 !important; color: var(--ca-text) !important; background: #f7f8fa !important; box-sizing: content-box; font-size: 12px; font-weight: 760; line-height: 44px; text-align: left; }
+html.company-agile #board:has(.board-swimlane-header) tr[id^="swimlane-"]:first-of-type > th.board-swimlane-header { border-top-width: 0 !important; }
+html.company-agile #board:has(.board-swimlane-header) .board-swimlane-header .board-swimlane-toggle { display: inline-grid; width: 26px; height: 26px; margin-right: 6px; place-items: center; border-radius: 6px; color: var(--ca-text-secondary); vertical-align: middle; text-decoration: none; }
+html.company-agile #board:has(.board-swimlane-header) .board-swimlane-header .board-swimlane-toggle:hover,
+html.company-agile #board:has(.board-swimlane-header) .board-swimlane-header .board-swimlane-toggle:focus { color: var(--ca-primary); background: var(--ca-primary-soft); outline: none; }
+html.company-agile #board:has(.board-swimlane-header) .board-swimlane-header .board-swimlane-toggle .fa { font-size: 13px; }
+html.company-agile #board:has(.board-swimlane-header) .board-swimlane-header > .board-column-header-task-count { float: right; display: inline-flex; min-height: 24px; margin: 10px 0 0 12px; padding: 0 9px; align-items: center; border-radius: 12px; color: var(--ca-text-secondary); background: #e9edf2; font-size: 10px; font-weight: 720; line-height: 24px; }
+html.company-agile #board:has(.board-swimlane-header) tr[class^="board-swimlane-columns-"]:not(.board-swimlane-columns-first) > th { position: static !important; height: auto; padding: 0 !important; border-top: 0 !important; border-radius: 8px 8px 0 0; background: #eef0f3 !important; vertical-align: top; }
+html.company-agile #board:has(.board-swimlane-header) tr[class^="board-swimlane-columns-"]:not(.board-swimlane-columns-first) .board-column-expanded-header { min-height: 58px; padding: 9px 10px 7px; align-content: center; }
+html.company-agile #board:has(.board-swimlane-header) tr.board-swimlane > td { position: relative; padding: 7px; overflow: hidden; border-radius: 0 0 8px 8px; background: #eef0f3 !important; isolation: isolate; vertical-align: top; }
+html.company-agile #board:has(.board-swimlane-header) tr.board-swimlane .board-task-list { width: 100%; min-width: 0; min-height: 72px; padding: 0; box-sizing: border-box; }
+html.company-agile #board:has(.board-swimlane-header) tr.board-swimlane .task-board { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+html.company-agile #board:has(.board-swimlane-header) tr.board-swimlane .task-board-title,
+html.company-agile #board:has(.board-swimlane-header) tr.board-swimlane .task-board-title a,
+html.company-agile #board:has(.board-swimlane-header) tr.board-swimlane .ca-card-summary { max-width: 100%; overflow-wrap: anywhere; }
+
+/* Comment compatibility surface: native actions and ACL remain unchanged. */
+html.company-agile .comment-sorting { margin: 0 0 12px; text-align: initial; }
+html.company-agile .comment-sorting > small { display: flex; min-height: 34px; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 6px; font-size: inherit; }
+html.company-agile .comment-sorting a { display: inline-flex; min-height: 34px; margin: 0; padding: 0 10px; align-items: center; gap: 5px; border: 1px solid var(--ca-border); border-radius: 7px; color: var(--ca-text-secondary); background: #fff; box-sizing: border-box; font-size: 11px; font-weight: 680; line-height: 1; text-decoration: none; }
+html.company-agile .comment-sorting a:has(.fa-comment) { border-color: var(--ca-primary); color: #fff; background: var(--ca-primary); }
+html.company-agile .comment-sorting a:hover { border-color: #85b8ff; color: var(--ca-primary); background: var(--ca-primary-soft); text-decoration: none; }
+html.company-agile .comment-sorting a:has(.fa-comment):hover { border-color: #0055cc; color: #fff; background: #0055cc; }
+html.company-agile .comment-sorting a:focus-visible { border-color: #85b8ff; outline: none; box-shadow: 0 0 0 3px rgba(12,102,228,.18); }
+html.company-agile .comment { position: relative; grid-template-columns: 36px minmax(0,1fr); padding-right: 48px; }
+html.company-agile .comment-title { grid-column: 2; padding-right: 2px; }
+html.company-agile .comment-actions { position: absolute; z-index: 4; top: 10px; right: 10px; width: 30px; height: 28px; }
+html.company-agile .comment-actions .dropdown { position: relative; }
+html.company-agile .comment-actions .dropdown-menu { display: grid; width: 30px; height: 28px; padding: 0; place-items: center; border: 0; border-radius: 6px; color: var(--ca-text-secondary); background: transparent; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-decoration: none; }
+html.company-agile .comment-actions .dropdown-menu:hover,
+html.company-agile .comment-actions .dropdown-menu:focus { color: var(--ca-primary); background: var(--ca-primary-soft); outline: none; text-decoration: none; }
+html.company-agile .comment-actions .dropdown > ul { z-index: var(--ca-z-popover); top: calc(100% + 5px); right: 0; left: auto; min-width: 180px; padding: 6px; border: 1px solid var(--ca-border); border-radius: 8px; background: #fff; box-shadow: var(--ca-shadow); }
+html.company-agile .comment-actions .dropdown > ul li { margin: 0; padding: 0; border: 0; }
+html.company-agile .comment-actions .dropdown > ul a { display: flex; min-height: 32px; padding: 0 8px; align-items: center; border-radius: 6px; color: var(--ca-text-secondary); font-size: 11px; text-decoration: none; }
+html.company-agile .comment-actions .dropdown > ul a:hover { color: var(--ca-primary); background: var(--ca-primary-soft); }
+html.company-agile .comment-content { grid-column: 2; min-width: 0; max-width: 100%; }
+html.company-agile .comment-content .markdown { min-width: 0; max-width: 100%; overflow-wrap: anywhere; word-break: normal; }
+html.company-agile .comment-content .markdown a { overflow-wrap: anywhere; word-break: break-word; }
+html.company-agile .comment.ca-comment-without-author { grid-template-columns: minmax(0,1fr); }
+html.company-agile .comment.ca-comment-without-author .comment-title,
+html.company-agile .comment.ca-comment-without-author .comment-content { grid-column: 1; }
+html.company-agile .comment.ca-comment-without-author .comment-title { padding-right: 34px; }
+html.company-agile .activity-event.ca-activity-without-author .activity-content { margin-left: 0; }
+html.company-agile .activity-event.ca-activity-without-author::after { display: none; }
+
+@media (max-width: 700px) {
+    html.company-agile .comment { grid-template-columns: 32px minmax(0,1fr); padding-right: 42px; }
+    html.company-agile .comment-actions { top: 8px; right: 8px; }
+}
 .ca-active-filter-summary strong { margin-right: 3px; color: var(--ca-text-muted); font-size: 10px; text-transform: uppercase; }
 .ca-active-filter-summary button { min-height: 26px; padding: 0 8px; border: 1px solid #85b8ff; border-radius: 13px; color: var(--ca-primary); background: var(--ca-primary-soft); font-size: 10px; cursor: pointer; }
 .ca-popover-apply { width: 100%; min-height: 34px; margin-top: 7px; border: 0; border-radius: 6px; color: #fff; background: var(--ca-primary); font-size: 11px; font-weight: 700; cursor: pointer; }

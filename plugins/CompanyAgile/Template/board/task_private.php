@@ -23,7 +23,7 @@
             <?= $this->hook->render('template:board:private:task:before-title', array('task' => $task)) ?>
             <div class="task-board-title"><?= $this->url->link($this->text->e($task['title']), 'TaskViewController', 'show', array('task_id' => $task['id']), false, 'ca-task-link') ?></div>
             <?= $this->hook->render('template:board:private:task:after-title', array('task' => $task)) ?>
-            <div class="ca-board-card-footer"><?= $this->render('board/task_footer', array('task' => $task, 'not_editable' => $not_editable, 'project' => $project)) ?><?php if (! empty($task['owner_id'])): ?><span class="ca-card-assignee ca-card-assignee-server"><?= $this->render('board/task_avatar', array('task' => $task)) ?></span><?php endif ?></div>
+            <div class="ca-board-card-footer"><?= $this->render('board/task_footer', array('task' => $task, 'not_editable' => $not_editable, 'project' => $project)) ?><?php if (! empty($task['owner_id']) && (! empty($task['assignee_username']) || ! empty($task['assignee_name']))): ?><span class="ca-card-assignee ca-card-assignee-server"><?= $this->render('board/task_avatar', array('task' => $task)) ?></span><?php endif ?></div>
         </div>
     <?php endif ?>
 </div>
