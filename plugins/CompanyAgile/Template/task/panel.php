@@ -15,7 +15,7 @@
         <?= $this->modal->medium('paperclip', t('CompanyAgile: Add attachment'), 'TaskFileController', 'create', array('task_id' => $task['id'])) ?>
         <?= $this->modal->medium('plus', t('CompanyAgile: Add subtask'), 'SubtaskController', 'create', array('task_id' => $task['id'])) ?>
         <details class="ca-task-more-actions ca-panel-more"><summary><?= t('CompanyAgile: More actions') ?></summary><?= $this->render('companyAgile:task/more_actions', array('task' => $task)) ?></details>
-        <?= $this->url->icon('external-link', t('CompanyAgile: Open full task page'), 'TaskViewController', 'show', array('task_id' => $task['id']), false, 'ca-open-full-task') ?>
+        <a class="ca-open-full-task" href="<?= $this->url->href('TaskViewController', 'show', array('task_id' => $task['id'])) ?>" target="_blank" rel="noopener noreferrer" title="<?= t('CompanyAgile: Open full task page in new tab') ?>"><i class="fa fa-external-link" aria-hidden="true"></i><?= t('CompanyAgile: Open full task page') ?></a>
     </div>
 
     <section class="ca-panel-section ca-panel-details">

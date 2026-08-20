@@ -956,7 +956,7 @@
                     trigger.focus();
                 }
                 if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                    var options = Array.prototype.filter.call(panel.querySelectorAll('[data-ca-option]'), function (item) { return !item.hidden; });
+                    var options = Array.prototype.map.call(Array.prototype.filter.call(panel.querySelectorAll('[data-ca-option]'), function (item) { return !item.hidden; }), function (item) { return item.querySelector('input[type="checkbox"]') || item; });
                     if (!options.length) return;
                     event.preventDefault();
                     var index = options.indexOf(document.activeElement);
@@ -965,8 +965,19 @@
                 }
             });
             panel.querySelectorAll('[data-ca-option]').forEach(function (option) {
+                var multi = panel.hasAttribute('data-ca-multi-popover');
+                var checkbox = option.querySelector('input[type="checkbox"]');
+                if (multi && checkbox) {
+                    checkbox.addEventListener('change', function () {
+                        option.setAttribute('aria-selected', checkbox.checked ? 'true' : 'false');
+                        var hasSelection = panel.querySelectorAll('[data-ca-multi-value][aria-selected="true"]').length > 0;
+                        trigger.classList.toggle('ca-filter-active', hasSelection);
+                        var clearButton = panel.querySelector('[data-ca-clear-multi]');
+                        if (clearButton) clearButton.disabled = !hasSelection;
+                    });
+                    return;
+                }
                 option.addEventListener('click', function () {
-                    var multi = panel.hasAttribute('data-ca-multi-popover');
                     if (!multi) panel.querySelectorAll('[data-ca-option]').forEach(function (item) { item.setAttribute('aria-selected', 'false'); });
                     option.setAttribute('aria-selected', multi && option.getAttribute('aria-selected') === 'true' ? 'false' : 'true');
                     var checkIcon = option.querySelector('.fa');
@@ -985,6 +996,15 @@
             if (applyMulti) applyMulti.addEventListener('click', function () {
                 var values = Array.prototype.map.call(panel.querySelectorAll('[data-ca-multi-value][aria-selected="true"]'), function (option) { return option.getAttribute('data-ca-multi-value'); });
                 replaceFilterGroup(panel.getAttribute('data-ca-multi-popover'), values);
+            });
+            var clearMulti = panel.querySelector('[data-ca-clear-multi]');
+            if (clearMulti) clearMulti.addEventListener('click', function () {
+                panel.querySelectorAll('[data-ca-multi-value]').forEach(function (option) {
+                    option.setAttribute('aria-selected', 'false');
+                    var checkbox = option.querySelector('input[type="checkbox"]');
+                    if (checkbox) checkbox.checked = false;
+                });
+                replaceFilterGroup(panel.getAttribute('data-ca-multi-popover'), []);
             });
             if (search) search.addEventListener('input', function () {
                 var term = normalizeSearchText(search.value.trim());
@@ -1019,13 +1039,15 @@
                 panel.querySelectorAll('[data-ca-multi-value]').forEach(function (option) {
                     var selected = selectedValues.indexOf(option.getAttribute('data-ca-multi-value')) !== -1;
                     option.setAttribute('aria-selected', selected ? 'true' : 'false');
-                    option.querySelector('.fa').className = selected ? 'fa fa-check-square-o' : 'fa fa-square-o';
+                    var checkbox = option.querySelector('input[type="checkbox"]');
+                    if (checkbox) checkbox.checked = selected;
                 });
                 if (selectedValues.length) {
                     var multiLabel = trigger.querySelector('[data-ca-trigger-label]');
                     if (multiLabel) multiLabel.textContent = selectedValues.length + ' ' + multiLabel.textContent + ' ✓';
                     trigger.classList.add('ca-filter-active');
                 }
+                if (clearMulti) clearMulti.disabled = selectedValues.length === 0;
             }
         });
 
@@ -1052,6 +1074,73 @@
         });
     }
 
+    function initializeDrawerModalContext() {
+        if (typeof KB === 'undefined' || document.documentElement.getAttribute('data-ca-drawer-modal-context') === 'ready') return;
+        document.documentElement.setAttribute('data-ca-drawer-modal-context', 'ready');
+        var origin = null;
+        var drawerScrollTop = 0;
+        var modalSize = 'medium';
+        var fromDrawer = false;
+        document.addEventListener('click', function (event) {
+            var trigger = event.target.closest('.js-modal-small, .js-modal-medium, .js-modal-large, .js-modal-confirm');
+            if (!trigger) return;
+            origin = trigger;
+            var drawer = trigger.closest('[data-ca-task-panel]');
+            fromDrawer = !!drawer;
+            drawerScrollTop = drawer ? drawer.scrollTop : 0;
+            modalSize = trigger.matches('.js-modal-confirm') ? 'confirm' : (trigger.matches('.js-modal-small') ? 'small' : (trigger.matches('.js-modal-large') ? 'large' : 'medium'));
+        }, true);
+        KB.on('modal.afterRender', function () {
+            var overlay = document.querySelector('#modal-overlay');
+            var modal = overlay ? overlay.querySelector(':scope > #modal-box') : null;
+            if (!overlay || !modal) return;
+            var content = modal.querySelector(':scope > #modal-content');
+            if (!content || content.getAttribute('data-ca-modal-content-ready') === 'true') return;
+            content.setAttribute('data-ca-modal-content-ready', 'true');
+            overlay.classList.add('ca-native-modal-overlay');
+            modal.classList.add('ca-native-modal', 'ca-native-modal-' + modalSize);
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            var heading = modal.querySelector('.ca-modal-page-header h2, .page-header h2, h2');
+            if (heading) {
+                if (!heading.id) heading.id = 'ca-native-modal-title';
+                modal.setAttribute('aria-labelledby', heading.id);
+            } else {
+                modal.setAttribute('aria-label', document.documentElement.lang === 'pt-BR' ? 'Janela de diálogo' : 'Dialog');
+            }
+            var form = modal.querySelector('form');
+            if (form && /(?:remove|delete|suppress|close|disable|dissociate)/i.test(form.action || '')) modal.classList.add('ca-native-modal-danger');
+            normalizeAssignMeActions(modal);
+            var editActions = modal.querySelector('.ca-task-edit-form .form-actions');
+            if (editActions) {
+                Array.prototype.slice.call(editActions.childNodes).forEach(function (node) {
+                    if (node.nodeType === 3) node.textContent = '';
+                });
+                var cancel = editActions.querySelector('a[href="#"]');
+                if (cancel) {
+                    cancel.textContent = document.documentElement.lang === 'pt-BR' ? 'Cancelar' : 'Cancel';
+                    cancel.classList.add('btn', 'ca-modal-cancel');
+                }
+            }
+            if (fromDrawer) {
+                overlay.classList.add('ca-drawer-secondary-modal');
+                document.body.classList.add('ca-drawer-secondary-modal-open');
+            }
+        });
+        KB.on('modal.beforeDestroy', function () {
+            if (!origin) return;
+            var trigger = origin;
+            origin = null;
+            document.body.classList.remove('ca-drawer-secondary-modal-open');
+            window.setTimeout(function () {
+                var drawer = document.querySelector('[data-ca-task-panel]');
+                if (fromDrawer && drawer && !drawer.hidden) drawer.scrollTop = drawerScrollTop;
+                if (trigger.isConnected) trigger.focus();
+                fromDrawer = false;
+            }, 0);
+        });
+    }
+
     function initializeTaskInteractions() {
         document.querySelectorAll('.task-board .tooltip, .ca-backlog-task .tooltip, .task-list .tooltip, .table-list-row .tooltip, .activity-event .tooltip, .task-links-table .tooltip').forEach(function (element) {
             element.classList.remove('tooltip');
@@ -1060,6 +1149,19 @@
         document.querySelectorAll('.task-board-title a, .ca-backlog-title, .task-list a[href*="task_id"], .table-list-row a[href*="task_id"], .activity-event a[href*="task_id"], .task-links-table a[href*="task_id"], .ca-relation-item a').forEach(function (link) {
             link.classList.add('ca-task-link');
             if (!link.getAttribute('title')) link.setAttribute('title', link.textContent.trim());
+        });
+    }
+
+    function normalizeAssignMeActions(root) {
+        root.querySelectorAll('.assign-me').forEach(function (link) {
+            if (link.getAttribute('data-ca-assign-me-ready') !== 'true') {
+                var label = document.documentElement.lang === 'pt-BR' ? 'Atribuir-me' : 'Assign to me';
+                if (link.textContent !== label) link.textContent = label;
+                link.classList.add('ca-assign-me');
+                link.setAttribute('data-ca-assign-me-ready', 'true');
+            }
+            var select = document.getElementById(link.getAttribute('data-target-id'));
+            if (select) link.hidden = String(select.value) === String(link.getAttribute('data-current-id'));
         });
     }
 
@@ -1078,12 +1180,7 @@
                 menu.innerHTML = '<span aria-hidden="true">•••</span>';
             }
         });
-        document.querySelectorAll('.ca-advanced-create-form .assign-me, #modal-content form[action*="TaskModificationController"] .assign-me').forEach(function (link) {
-            link.textContent = document.documentElement.lang === 'pt-BR' ? 'Atribuir-me' : 'Assign to me';
-            link.classList.add('ca-assign-me');
-            var select = document.getElementById(link.getAttribute('data-target-id'));
-            if (select && String(select.value) === String(link.getAttribute('data-current-id'))) link.hidden = true;
-        });
+        normalizeAssignMeActions(document);
         document.querySelectorAll('.activity-event').forEach(function (event) {
             event.classList.add('ca-activity-timeline-item');
         });
@@ -1094,7 +1191,7 @@
     }
 
     function initializeTagPickers(root) {
-        root.querySelectorAll('.ca-create-tags select[multiple]:not([data-ca-tags-ready])').forEach(function (select) {
+        root.querySelectorAll('.ca-create-tags select[multiple]:not([data-ca-tags-ready]), #modal-content select.tag-autocomplete[multiple]:not([data-ca-tags-ready]), #modal-content select.ca-task-tag-source[multiple]:not([data-ca-tags-ready])').forEach(function (select) {
             select.setAttribute('data-ca-tags-ready', 'true');
             select.classList.add('ca-native-tag-select');
             select.setAttribute('aria-hidden', 'true');
@@ -1682,6 +1779,7 @@
         initializeProjectPicker();
         suppressNativeProjectPicker();
         initializeAvatarFallbacks();
+        initializeDrawerModalContext();
         initializeTaskInteractions();
         initializeContentSurfaces();
         initializeCompanyPopovers();
@@ -1808,6 +1906,11 @@
         });
 
         document.addEventListener('change', function (event) {
+            if (event.target.matches('select[name="owner_id"], select[name="user_id"]')) {
+                document.querySelectorAll('.assign-me[data-target-id], .ca-assign-me[data-target-id]').forEach(function (link) {
+                    if (link.getAttribute('data-target-id') === event.target.id) link.hidden = String(event.target.value) === String(link.getAttribute('data-current-id'));
+                });
+            }
             if (event.target.matches('input[name="duplicate_multiple_projects"]')) {
                 var duplicateProjects = event.target.closest('form').querySelector('[data-ca-duplicate-projects]');
                 if (duplicateProjects) duplicateProjects.hidden = !event.target.checked;

@@ -56,6 +56,12 @@ class Plugin extends Base
         ));
         $this->template->setTemplateOverride('layout', 'companyAgile:layout');
         $this->template->setTemplateOverride('board/task_private', 'companyAgile:board/task_private');
+        $this->template->setTemplateOverride('task_modification/show', 'companyAgile:task/edit');
+        $this->template->setTemplateOverride('comment/create', 'companyAgile:comment/create');
+        $this->template->setTemplateOverride('comment/edit', 'companyAgile:comment/edit');
+        $this->template->setTemplateOverride('task_file/create', 'companyAgile:task_file/create');
+        $this->template->setTemplateOverride('subtask/create', 'companyAgile:subtask/create');
+        $this->template->setTemplateOverride('subtask/edit', 'companyAgile:subtask/edit');
         $this->template->setTemplateOverride('config/layout', 'companyAgile:config/layout');
         $this->template->setTemplateOverride('project/layout', 'companyAgile:project/layout');
         $this->template->hook->attachCallable(
