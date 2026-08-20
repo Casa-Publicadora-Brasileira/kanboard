@@ -1,0 +1,6 @@
+<div class="ca-card-kicker" data-ca-issue-type="<?= $this->text->e($issue_type['code']) ?>" data-ca-sprint-id="<?= isset($issue_type['sprint_id']) ? (int) $issue_type['sprint_id'] : 0 ?>" data-ca-sprint-status="<?= isset($issue_type['sprint_status']) ? $this->text->e($issue_type['sprint_status']) : 'backlog' ?>" data-ca-epic-id="<?= empty($issue_type['epic_id']) ? 'none' : (int) $issue_type['epic_id'] ?>">
+    <span class="ca-card-type" style="--ca-issue-color: <?= $this->text->e($issue_type['color']) ?>"><i class="fa fa-<?= $this->text->e($issue_type['icon']) ?>"></i><?= t('CompanyAgile issue type: '.$issue_type['code']) ?></span>
+    <span class="ca-card-id"><?= '#'.(int) $task['id'] ?></span>
+    <?php if ($issue_type['code'] === 'epic' && isset($issue_type['epic_points_total'])): ?><span class="ca-card-points"><?= $this->text->e((float) $issue_type['epic_points_completed']) ?> / <?= $this->text->e((float) $issue_type['epic_points_total']) ?> SP</span><?php elseif (isset($issue_type['story_points']) && $issue_type['story_points'] !== null): ?><span class="ca-card-points"><?= $this->text->e((float) $issue_type['story_points']) ?> SP</span><?php endif ?>
+    <?php if (! empty($issue_type['epic_title'])): ?><span class="ca-card-epic"><?= $this->text->e($issue_type['epic_title']) ?></span><?php endif ?>
+</div>

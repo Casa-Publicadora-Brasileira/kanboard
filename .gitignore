@@ -24,6 +24,8 @@ data/config.php
 *.bak
 /config.php
 !docker/var/wwww/app/config.php
+.env.local
+.env.development.local
 node_modules
 .phpunit.result.cache
 app/version.txt

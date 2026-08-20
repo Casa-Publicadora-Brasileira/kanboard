@@ -1,0 +1,2 @@
+# Intentionally empty while the local database is being prepared.
+# This disables the image's automatic `cli cronjob` execution.

@@ -1,0 +1,56 @@
+name: kanboard-local
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        VERSION: local-1.2.53
+    container_name: kanboard-local-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${KANBOARD_LOCAL_PORT:-18080}:80"
+    environment:
+      DATABASE_URL: "mysql://${KANBOARD_LOCAL_DB_USER:?Configure KANBOARD_LOCAL_DB_USER in .env.local}:${KANBOARD_LOCAL_DB_PASSWORD:?Configure KANBOARD_LOCAL_DB_PASSWORD in .env.local}@kanboard-local-db:3306/${KANBOARD_LOCAL_DB_NAME:?Configure KANBOARD_LOCAL_DB_NAME in .env.local}"
+      DB_RUN_MIGRATIONS: "false"
+      LOG_DRIVER: stderr
+      DEBUG: "false"
+    depends_on:
+      kanboard-local-db:
+        condition: service_healthy
+    volumes:
+      - ./docker/local/empty-crontab:/etc/crontabs/nginx:ro
+      - ./plugins/CompanyAgile:/var/www/app/plugins/CompanyAgile:ro
+      - kanboard-local-data:/var/www/app/data
+      - kanboard-local-plugins:/var/www/app/plugins
+      - kanboard-local-certs:/etc/nginx/ssl
+
+  kanboard-local-db:
+    image: mysql:8.0.42
+    container_name: kanboard-local-db
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3313:3306"
+    environment:
+      MYSQL_DATABASE: "${KANBOARD_LOCAL_DB_NAME:?Configure KANBOARD_LOCAL_DB_NAME in .env.local}"
+      MYSQL_USER: "${KANBOARD_LOCAL_DB_USER:?Configure KANBOARD_LOCAL_DB_USER in .env.local}"
+      MYSQL_PASSWORD: "${KANBOARD_LOCAL_DB_PASSWORD:?Configure KANBOARD_LOCAL_DB_PASSWORD in .env.local}"
+      MYSQL_ROOT_PASSWORD: "${KANBOARD_LOCAL_DB_ROOT_PASSWORD:?Configure KANBOARD_LOCAL_DB_ROOT_PASSWORD in .env.local}"
+    volumes:
+      - kanboard-local-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysqladmin ping --host=127.0.0.1 --user=$$MYSQL_USER --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+volumes:
+  kanboard-local-data:
+    name: kanboard-local-data
+  kanboard-local-plugins:
+    name: kanboard-local-plugins
+  kanboard-local-certs:
+    name: kanboard-local-certs
+  kanboard-local-mysql-data:
+    name: kanboard-local-mysql-data
