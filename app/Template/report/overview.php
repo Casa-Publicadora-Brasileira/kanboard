@@ -1,4 +1,4 @@
-<div class="page-header">
+<div class="tw:flex tw:bg-red-500">
     <h2><?= t('Report Overview') ?></h2>
 </div>
 <div class="page-content">

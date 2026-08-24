@@ -10,12 +10,16 @@ namespace Kanboard\Controller;
 class ReportController extends BaseController
 {
     /**
-     * Report Overview (all projects/users)
+     * Report Overview (all projects/users) — Admin only
      *
      * @access public
      */
     public function overview()
     {
+        if (! $this->userSession->isAdmin()) {
+            return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
+        }
+
         $this->response->html($this->helper->layout->app('report/overview', array(
             'no_layout' => true,
             'title' => t('Report Overview')
@@ -24,16 +28,23 @@ class ReportController extends BaseController
 
     /**
      * Report by User
+     * Admin: can view any user_id from the URL
+     * Regular user: always sees their own data
      *
      * @access public
      */
     public function user()
     {
-        $user_id = $this->request->getIntegerParam('user_id');
+        if ($this->userSession->isAdmin()) {
+            $user_id = $this->request->getIntegerParam('user_id', $this->userSession->getId());
+        } else {
+            $user_id = $this->userSession->getId();
+        }
+
         $user = $this->userModel->getById($user_id);
 
         if (empty($user)) {
-            // Flash error or redirect, but since it's just rendering we can just pass an empty user or handle it in template
+            return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
         }
 
         $this->response->html($this->helper->layout->pageLayout('report/user', array(
@@ -55,7 +66,7 @@ class ReportController extends BaseController
         $project = $this->projectModel->getById($project_id);
 
         if (empty($project)) {
-            // Flash error or redirect
+            return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
         }
 
         $this->response->html($this->helper->layout->pageLayout('report/project', array(
