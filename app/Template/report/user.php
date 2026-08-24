@@ -14,7 +14,9 @@
         </div>
         <h3 class="text-lg font-semibold text-slate-800 m-0!">
             <strong>#<?= $user_id ?></strong> <?= $user['name'] ?>
-            <span class="text-xs font-normal text-slate-500"><?= $user['username'] ?> - @<?= $team ?></span>
+            <span class="text-xs font-normal text-slate-500">
+                <?= $user['username'] ?><?= !empty($team) ? " - @" . $this->text->e($team) : '' ?>
+            </span>
         </h3>
     </div>
 
@@ -36,7 +38,7 @@
             <div class="flex items-center gap-2">
                 <span class="text-2xl font-semibold text-primary-700 group-active:text-orange-700"><?= $unexpected['percent'] * 100 ?>%</span>
                 <span class="inline-flex items-center text-xs font-normal text-primary-800 border-primary-200 bg-primary-50 group-active:text-orange-700 group-active:bg-orange-100 px-2 py-0.5 rounded-full border group-active:border-orange-200">
-                    <?= $unexpected['tasks'] ?> tarefa(s) não prevista(s)
+                    <?= $unexpected['tasks'] ?> tarefa(s) não planejadas(s)
                 </span>
             </div>
         </div>
@@ -50,7 +52,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10 border-b-2 border-primary-500 pb-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-10 border-b-2 border-primary-500 pb-4">
 
         <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-col">
             <span class="text-xs font-semibold text-primary-500 uppercase tracking-wider">Média de Complexidade</span>
@@ -79,19 +81,6 @@
             </div>
         </div>
 
-
-        <div class="bg-slate-50 border border-slate-200 p-3 rounded-lg">
-            <span class="block text-xs font-semibold text-primary-500 uppercase tracking-wider mb-2">
-                Planejamento
-            </span>
-            <?php if ($concluded['done'] === 1): ?>
-                <span class="block text-sm font-bold text-emerald-600"><?= $concluded['done'] * 100 ?>% Entregue</span>
-            <?php elseif ($concluded['done'] < 0.5): ?>
-                <span class="block text-sm font-bold text-red-600"><?= $concluded['done'] * 100 ?>% Entregue</span>
-            <?php else: ?>
-                <span class="block text-sm font-bold"><?= $concluded['done'] * 100 ?>% Entregue</span>
-            <?php endif ?>
-        </div>
     </div>
 
     <?php foreach ($teams as $team): ?>
@@ -111,14 +100,14 @@
         </div>
 
         <div class="overflow-x-auto mb-6">
-            <table class="w-full border-collapse text-xs">
+            <table class="w-full table-fixed border-collapse text-xs">
                 <thead>
                     <tr class="text-primary-700 text-left">
-                        <th class="p-2 border bg-primary-50! border-primary-100!">Tarefa</th>
-                        <th class="p-2 border text-center! bg-primary-50! border-primary-100!">Produto</th>
-                        <th class="p-2 border text-center! bg-primary-50! border-primary-100!">Prevista</th>
-                        <th class="p-2 border text-center! bg-primary-50! border-primary-100!">Complexidade</th>
-                        <th class="p-2 border text-center! bg-primary-50! border-primary-100!">Status</th>
+                        <th class="w-5/12 p-2 border bg-primary-50! border-primary-100!">Tarefa</th>
+                        <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!">Produto</th>
+                        <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!">Planejado</th>
+                        <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!">Complexidade</th>
+                        <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">

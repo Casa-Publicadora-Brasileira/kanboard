@@ -100,6 +100,7 @@ class ClassProvider implements ServiceProviderInterface
             'UserNotificationFilterModel',
             'UserUnreadNotificationModel',
             'UserMetadataModel',
+            'UserReportModel',
         ),
         'Validator' => array(
             'ActionValidator',
