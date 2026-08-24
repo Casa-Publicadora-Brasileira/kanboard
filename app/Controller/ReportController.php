@@ -62,18 +62,18 @@ class ReportController extends BaseController
      */
     public function project()
     {
-        $project_id = $this->request->getIntegerParam('project_id');
-        $project = $this->projectModel->getById($project_id);
+        // $project_id = $this->request->getIntegerParam('project_id');
+        // $project = $this->projectModel->getById($project_id);
 
-        if (empty($project)) {
-            return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
-        }
+        // if (empty($project)) {
+        //     return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
+        // }
 
         $this->response->html($this->helper->layout->pageLayout('report/project', array(
             'no_layout' => true,
             'title'      => t('Project Report'),
-            'project_id' => $project_id,
-            'project'    => $project
+            // 'project_id' => $project_id,
+            // 'project'    => $project
         )));
     }
 }

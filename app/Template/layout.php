@@ -51,7 +51,8 @@
 
         <?= $this->hook->render('template:layout:head') ?>
     </head>
-    <body data-status-url="<?= $this->url->href('UserAjaxController', 'status') ?>"
+      <body class="antialiased scroll-smooth bg-base-whisper-500"
+          data-status-url="<?= $this->url->href('UserAjaxController', 'status') ?>"
           data-login-url="<?= $this->url->href('AuthController', 'login') ?>"
           data-keyboard-shortcut-url="<?= $this->url->href('DocumentationController', 'shortcuts') ?>"
           data-timezone="<?= $this->app->getTimezone() ?>"
