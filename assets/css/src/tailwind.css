@@ -1,0 +1,4 @@
+@import "tailwindcss" prefix(tw);
+
+@source "../../../app/**/*.php";
+@source "../../../plugins/**/*.php";

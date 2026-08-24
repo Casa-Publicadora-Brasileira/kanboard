@@ -15,6 +15,7 @@
 
         <?= $this->asset->colorCss() ?>
         <?= $this->asset->css('assets/css/vendor.min.css') ?>
+        <?= $this->asset->css('assets/css/tailwind.min.css') ?>
         <?php if (! isset($not_editable)): ?>
             <?= $this->asset->css('assets/css/'.$this->user->getTheme().'.min.css') ?>
         <?php else: ?>
