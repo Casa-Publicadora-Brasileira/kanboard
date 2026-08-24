@@ -2,3 +2,24 @@
 
 @source "./app/**/*.php";
 @source "./plugins/**/*.php";
+
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+@custom-variant active (&.active);
+@custom-variant group-active (.active &);
+
+@theme {
+  --font-montserrat: "Montserrat", sans-serif;
+
+  --color-primary-50: #ebf4f7;
+  --color-primary-100: #d8e9f0;
+  --color-primary-200: #a3c8d9;
+  --color-primary-300: #74a7c2;
+  --color-primary-400: #2c6794;
+  --color-primary-500: #036;
+  --color-primary-600: #002c5c;
+  --color-primary-700: #00214d;
+  --color-primary-800: #00183d;
+  --color-primary-900: #00112e;
+  --color-primary-950: #000a1f;
+}
