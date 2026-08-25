@@ -58,7 +58,7 @@
             <span class="text-xs font-semibold text-primary-500 uppercase tracking-wider">Média de Complexidade</span>
             <div class="flex items-baseline gap-1 mt-1">
                 <span class="text-xl font-bold text-slate-800"><?= $tasks['avg'] ?></span>
-                <span class="text-sm font-normal text-primary-500">Pontos/Task</span>
+                <span class="text-sm font-normal text-primary-500">Ponto(s)</span>
             </div>
         </div>
 
@@ -73,10 +73,10 @@
                     </span>
                 <?php endif ?>
                 <span class="inline-flex items-center gap-1 text-xs font-normal text-primary-700 bg-primary-50 border border-primary-200 px-2.5 py-1 rounded-full">
-                    <span><?= $tasks['features'] ?></span> Feature(s)
+                    <span><?= $tasks['features'] ?></span> Funcionalidade(s)
                 </span>
                 <span class="inline-flex items-center gap-1 text-xs font-normal text-orange-700 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
-                    <span><?= $tasks['bugs'] ?></span> Bug(s)
+                    <span><?= $tasks['bugs'] ?></span> Correção(ões)
                 </span>
             </div>
         </div>
