@@ -73,14 +73,14 @@
         <div class="flex items-center gap-2 flex-wrap">
             <?php if ($tasks['hotfixes'] > 0): ?>
                 <span class="inline-flex items-center gap-1 text-xs font-normal text-red-700 bg-red-50 border border-red-200 px-2.5 py-1 rounded-full">
-                    <span><?= $tasks['hotfixes'] ?></span> Hotfix(s)
+                    <span><?= $tasks['hotfixes'] ?></span> <?= t('Hotfix(s)') ?>
                 </span>
             <?php endif ?>
             <span class="inline-flex items-center gap-1 text-xs font-normal text-primary-700 bg-primary-50 border border-primary-200 px-2.5 py-1 rounded-full">
-                <span><?= $tasks['features'] ?></span> Funcionalidade(s)
+                <span><?= $tasks['features'] ?></span> <?= t('Funcionalidade(s)') ?>
             </span>
             <span class="inline-flex items-center gap-1 text-xs font-normal text-orange-700 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full">
-                <span><?= $tasks['bugs'] ?></span> Correção(ões)
+                <span><?= $tasks['bugs'] ?></span> <?= t('Correção(ões)') ?>
             </span>
         </div>
     </div>

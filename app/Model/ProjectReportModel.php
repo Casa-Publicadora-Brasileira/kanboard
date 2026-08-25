@@ -119,11 +119,11 @@ class ProjectReportModel extends Base
         return $this->db->table(TaskModel::TABLE)
             ->columns(
                 TaskModel::TABLE.'.*',
-                UserModel::TABLE.'.name AS owner_name',
-                UserModel::TABLE.'.username AS owner_username'
+                'ua.name AS owner_name',
+                'ua.username AS owner_username'
             )
             ->join('task_has_tags', 'task_id', 'id')
-            ->join(UserModel::TABLE, 'id', 'owner_id', TaskModel::TABLE)
+            ->left(UserModel::TABLE, 'ua', 'id', TaskModel::TABLE, 'owner_id')
             ->eq(TaskModel::TABLE.'.project_id', 1)
             ->eq('task_has_tags.tag_id', $projectTagId)
             ->eq(TaskModel::TABLE.'.is_active', 1)
