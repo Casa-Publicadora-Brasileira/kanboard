@@ -9,6 +9,7 @@
 /vendor/*
 .idea
 .vscode
+/graphify-out/
 /nbproject/
 .DS_Store
 ehthumbs.db
