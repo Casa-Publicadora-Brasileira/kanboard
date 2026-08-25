@@ -58,24 +58,29 @@ class ReportController extends BaseController
     }
 
     /**
-     * Report by Project
+     * Report by Project (Tag)
+     * Admin only
      *
      * @access public
      */
     public function project()
     {
-        // $project_id = $this->request->getIntegerParam('project_id');
-        // $project = $this->projectModel->getById($project_id);
+        if (! $this->userSession->isAdmin()) {
+            return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
+        }
 
-        // if (empty($project)) {
-        //     return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
-        // }
+        $availableProjects = $this->projectReportModel->getAvailableProjects();
+        $defaultTagId = !empty($availableProjects) ? $availableProjects[0]['id'] : 233;
 
-        $this->response->html($this->helper->layout->pageLayout('report/project', array(
-            'no_layout' => true,
-            'title'      => t('Project Report'),
-            // 'project_id' => $project_id,
-            // 'project'    => $project
-        )));
+        $projectTagId = $this->request->getIntegerParam('project_tag_id', $defaultTagId);
+
+        $report_data = $this->projectReportModel->getReportData($projectTagId);
+
+        $this->response->html($this->helper->layout->pageLayout('report/project', array_merge(array(
+            'no_layout'          => true,
+            'title'              => t('Project Report'),
+            'available_projects' => $availableProjects,
+            'selected_project'   => $projectTagId,
+        ), $report_data)));
     }
 }
