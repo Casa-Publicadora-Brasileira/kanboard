@@ -288,6 +288,7 @@ class OverviewReportModel extends Base
                 'total_tasks'     => $totalTasks,
                 'concluded_tasks' => $concludedTasks,
                 'total_points'    => $totalPoints,
+                'avg_complexity'  => $totalTasks > 0 ? round($totalPoints / $totalTasks, 1) : 0.0,
             ];
         }
 
@@ -402,6 +403,19 @@ class OverviewReportModel extends Base
                     'has_activity'    => true,
                 ];
             }
+
+            usort($productsData, function ($a, $b) {
+                if ($a['has_activity'] !== $b['has_activity']) {
+                    return $b['has_activity'] <=> $a['has_activity'];
+                }
+                if ($a['total_tasks'] !== $b['total_tasks']) {
+                    return $b['total_tasks'] <=> $a['total_tasks'];
+                }
+                if ($a['points'] !== $b['points']) {
+                    return $b['points'] <=> $a['points'];
+                }
+                return strcmp($a['name'], $b['name']);
+            });
 
             $projectResults[] = [
                 'id'              => $projId,

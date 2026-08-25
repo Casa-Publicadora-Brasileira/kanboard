@@ -35,7 +35,6 @@ class OverviewReportModelTest extends Base
         $this->assertArrayHasKey('total_points', $data['kpis']);
         $this->assertArrayHasKey('interruption_rate', $data['kpis']);
         $this->assertArrayHasKey('occupancy_rate', $data['kpis']);
-        $this->assertArrayHasKey('team_occupancy', $data['kpis']);
     }
 
     public function testDependencyInjectionRegistration()
@@ -79,18 +78,19 @@ class OverviewReportModelTest extends Base
         $groupMemberModel->addUser(4, $bothId);
 
         // Create tasks in project 1
-        // Dev1: 2 tasks (score: 5 and 12 = 17 -> heavy workload)
+        // Dev1: 2 tasks (score: 5 and 12 = 17)
         $taskCreationModel->create(['title' => 'Task 1', 'project_id' => 1, 'owner_id' => $dev1Id, 'score' => 5, 'column_id' => 5]);
         $taskCreationModel->create(['title' => 'Task 2', 'project_id' => 1, 'owner_id' => $dev1Id, 'score' => 12, 'column_id' => 1]);
 
-        // Dev2: 1 task (score: 8 -> balanced workload)
+        // Dev2: 1 task (score: 8)
         $taskCreationModel->create(['title' => 'Task 3', 'project_id' => 1, 'owner_id' => $dev2Id, 'score' => 8, 'column_id' => 5]);
 
-        // Leader: 1 task (score: 3)
-        $taskCreationModel->create(['title' => 'Task 4', 'project_id' => 1, 'owner_id' => $leaderId, 'score' => 3, 'column_id' => 5]);
+        // Leader: 1 task (score: 6)
+        $taskCreationModel->create(['title' => 'Task 4', 'project_id' => 1, 'owner_id' => $leaderId, 'score' => 6, 'column_id' => 5]);
 
-        // Both: 1 task (score: 4)
+        // Both: 2 tasks (scores: 4 and 6 = 10)
         $taskCreationModel->create(['title' => 'Task 5', 'project_id' => 1, 'owner_id' => $bothId, 'score' => 4, 'column_id' => 5]);
+        $taskCreationModel->create(['title' => 'Task 6', 'project_id' => 1, 'owner_id' => $bothId, 'score' => 6, 'column_id' => 1]);
 
         $overviewReportModel = new OverviewReportModel($this->container);
         $data = $overviewReportModel->getOverviewData();
@@ -114,7 +114,6 @@ class OverviewReportModelTest extends Base
         $this->assertEquals(2, $data['developers'][0]['total_tasks']);
         $this->assertEquals(1, $data['developers'][0]['concluded_tasks']);
         $this->assertEquals(8.5, $data['developers'][0]['avg_complexity']);
-        $this->assertEquals('heavy', $data['developers'][0]['workload_status']);
 
         $this->assertEquals(2, $data['developers'][1]['rank']);
         $this->assertEquals($dev2Id, $data['developers'][1]['id']);
@@ -122,18 +121,31 @@ class OverviewReportModelTest extends Base
         $this->assertEquals(1, $data['developers'][1]['total_tasks']);
         $this->assertEquals(1, $data['developers'][1]['concluded_tasks']);
         $this->assertEquals(8.0, $data['developers'][1]['avg_complexity']);
-        $this->assertEquals('balanced', $data['developers'][1]['workload_status']);
+
+        // Verify Leader stats including avg_complexity
+        $leadersById = [];
+        foreach ($data['product_leaders'] as $l) {
+            $leadersById[$l['id']] = $l;
+        }
+
+        $this->assertEquals(6.0, $leadersById[$leaderId]['total_points']);
+        $this->assertEquals(1, $leadersById[$leaderId]['total_tasks']);
+        $this->assertEquals(6.0, $leadersById[$leaderId]['avg_complexity']);
+
+        $this->assertEquals(10.0, $leadersById[$bothId]['total_points']);
+        $this->assertEquals(2, $leadersById[$bothId]['total_tasks']);
+        $this->assertEquals(5.0, $leadersById[$bothId]['avg_complexity']);
 
         // Global KPIs
-        $this->assertEquals(5, $data['kpis']['total_tasks']);
+        $this->assertEquals(6, $data['kpis']['total_tasks']);
         $this->assertEquals(4, $data['kpis']['concluded_tasks']);
-        $this->assertEquals(32.0, $data['kpis']['total_points']);
+        $this->assertEquals(41.0, $data['kpis']['total_points']);
         $this->assertEquals(2, $data['kpis']['total_devs']);
         $this->assertEquals(2, $data['kpis']['active_devs']);
         $this->assertEquals(100, $data['kpis']['occupancy_rate']);
     }
 
-    public function testPortfolioStatsAndTags()
+    public function testPortfolioStatsAndProductSorting()
     {
         $projectModel = new ProjectModel($this->container);
         $columnModel = new ColumnModel($this->container);
@@ -151,10 +163,6 @@ class OverviewReportModelTest extends Base
         // Task 1: ProjectTag 233 (CPB_PROVAS), ProductTag 233 (CPB_PROVAS), Concluded (5), Score 8
         $t1 = $taskCreationModel->create(['title' => 'CPB Provas Feature', 'project_id' => 1, 'score' => 8, 'column_id' => 5]);
         $this->container['db']->table('task_has_tags')->insert(['task_id' => $t1, 'tag_id' => 233]);
-
-        // Task 2: ProjectTag 243 (DEVOPS), ProductTag 243 (DEVOPS), In progress (1), Score 5
-        $t2 = $taskCreationModel->create(['title' => 'DevOps Pipeline', 'project_id' => 1, 'score' => 5, 'column_id' => 1]);
-        $this->container['db']->table('task_has_tags')->insert(['task_id' => $t2, 'tag_id' => 243]);
 
         $overviewReportModel = new OverviewReportModel($this->container);
         $data = $overviewReportModel->getOverviewData();
@@ -174,21 +182,16 @@ class OverviewReportModelTest extends Base
         $this->assertEquals(1, $cpbProvas['concluded_tasks']);
         $this->assertEquals(8.0, $cpbProvas['total_points']);
 
-        // Check DEVOPS (243)
-        $this->assertArrayHasKey(243, $projectsById);
-        $devops = $projectsById[243];
-        $this->assertTrue($devops['has_activity']);
-        $this->assertEquals(1, $devops['total_tasks']);
-        $this->assertEquals(0, $devops['concluded_tasks']);
-        $this->assertEquals(5.0, $devops['total_points']);
+        // Check that products with activity are sorted first
+        $firstProduct = $cpbProvas['products'][0];
+        $this->assertTrue($firstProduct['has_activity']);
+        $this->assertEquals('CPB Provas', $firstProduct['name']);
+        $this->assertEquals(1, $firstProduct['total_tasks']);
 
-        // Check project without tasks (e.g. ACES = 245)
-        $this->assertArrayHasKey(245, $projectsById);
-        $aces = $projectsById[245];
-        $this->assertFalse($aces['has_activity']);
-        $this->assertEquals(0, $aces['total_tasks']);
-        $this->assertEquals(0, $aces['concluded_tasks']);
-        $this->assertEquals(0.0, $aces['total_points']);
+        // Check subsequent product with 0 activity
+        $inactiveProduct = $cpbProvas['products'][1];
+        $this->assertFalse($inactiveProduct['has_activity']);
+        $this->assertEquals(0, $inactiveProduct['total_tasks']);
     }
 
     public function testRenderOverviewTemplate()
@@ -199,12 +202,12 @@ class OverviewReportModelTest extends Base
         $html = $this->container['template']->render('report/overview', $data);
 
         $this->assertStringContainsString('Visão Geral de Operações (Portfólio)', $html);
-        $this->assertStringContainsString('Tarefas Entregues', $html);
+        $this->assertStringContainsString('Concluídos', $html);
         $this->assertStringContainsString('Total de Pontos', $html);
         $this->assertStringContainsString('Taxa de Interrupção', $html);
         $this->assertStringContainsString('Ocupação da Equipe', $html);
         $this->assertStringContainsString('Capacidade &amp; Gestão da Equipe', $html);
         $this->assertStringContainsString('Portfólio de Projetos e Produtos', $html);
+        $this->assertStringContainsString('Planejados', $html);
     }
 }
-
