@@ -2,6 +2,8 @@
 
 namespace Kanboard\Controller;
 
+use Kanboard\Enum\ProjectTagEnum;
+
 /**
  * Report Controller
  *
@@ -20,10 +22,12 @@ class ReportController extends BaseController
             return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
         }
 
-        $this->response->html($this->helper->layout->app('report/overview', array(
+        $overviewData = $this->overviewReportModel->getOverviewData();
+
+        $this->response->html($this->helper->layout->pageLayout('report/overview', array_merge(array(
             'no_layout' => true,
-            'title' => t('Report Overview')
-        )));
+            'title'     => t('Visão Geral de Operações (Portfólio)'),
+        ), $overviewData)));
     }
 
     /**
@@ -59,28 +63,26 @@ class ReportController extends BaseController
 
     /**
      * Report by Project (Tag)
-     * Admin only
      *
      * @access public
      */
     public function project()
     {
-        if (! $this->userSession->isAdmin()) {
+
+        $availableProjects = ProjectTagEnum::toArray();
+        $project_id = $this->request->getIntegerParam('project_id', $availableProjects[0]['id']);
+
+        if (empty(ProjectTagEnum::tryFrom($project_id))) {
             return $this->response->redirect($this->helper->url->to('DashboardController', 'show'));
         }
 
-        $availableProjects = $this->projectReportModel->getAvailableProjects();
-        $defaultTagId = !empty($availableProjects) ? $availableProjects[0]['id'] : 233;
-
-        $projectTagId = $this->request->getIntegerParam('project_tag_id', $defaultTagId);
-
-        $report_data = $this->projectReportModel->getReportData($projectTagId);
+        $report_data = $this->projectReportModel->getReportData($project_id);
 
         $this->response->html($this->helper->layout->pageLayout('report/project', array_merge(array(
             'no_layout'          => true,
             'title'              => t('Project Report'),
             'available_projects' => $availableProjects,
-            'selected_project'   => $projectTagId,
+            'selected_project'   => $project_id,
         ), $report_data)));
     }
 }
