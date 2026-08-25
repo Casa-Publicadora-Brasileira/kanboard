@@ -5,11 +5,8 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800 tracking-tight">
-                    <?= t('Visão Geral de Operações (Portfólio)') ?>
+                    <?= t('Visão Geral da Sprint') ?>
                 </h2>
-                <p class="text-xs text-slate-500 font-medium mt-0.5">
-                    <?= t('Consolidado da Sprint Atual • Acompanhamento Executivo') ?>
-                </p>
             </div>
             <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm self-start sm:self-auto">
                 <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
@@ -72,17 +69,14 @@
 
     <!-- Bloco de Capacidade & Gestão da Equipe -->
     <div class="space-y-4">
-        <h3 class="text-base font-bold text-slate-800 tracking-tight">
-            <?= t('Capacidade & Gestão da Equipe') ?>
-        </h3>
-
+        
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
             <!-- Ranking de Desenvolvedores -->
             <div class="bg-slate-50/50 border border-slate-200 rounded-lg p-4">
                 <div class="flex items-center justify-between mb-3">
                     <h4 class="text-sm font-bold text-primary-800 uppercase tracking-wide">
-                        <?= t('Ranking de Desenvolvedores') ?>
+                        <?= t('Desenvolvedores') ?>
                     </h4>
                     <span class="text-xs text-slate-500 font-medium">
                         <?= count($developers) ?> <?= t('desenvolvedor(es)') ?>
@@ -140,7 +134,7 @@
             <div class="bg-slate-50/50 border border-slate-200 rounded-lg p-4 flex flex-col">
                 <div class="flex items-center justify-between mb-3">
                     <h4 class="text-sm font-bold text-primary-800 uppercase tracking-wide">
-                        <?= t('Product Leaders') ?>
+                        <?= t('Líderes de Produto') ?>
                     </h4>
                     <span class="text-xs text-slate-500 font-medium">
                         <?= count($product_leaders) ?> <?= t('líder(es)') ?>
@@ -248,23 +242,23 @@
                                     <?php if (empty($proj['products'])): ?>
                                         <tr>
                                             <td colspan="4" class="p-3 text-center text-slate-400 italic">
-                                                <?= t('Nenhum produto associado.') ?>
+                                                <?= t('Nenhum produto trabalhado nesta sprint.') ?>
                                             </td>
                                         </tr>
                                     <?php else: ?>
                                         <?php foreach ($proj['products'] as $prod): ?>
-                                            <tr class="<?= $prod['has_activity'] ? 'hover:bg-slate-50/80' : 'text-slate-400 bg-slate-50/20' ?> transition">
-                                                <td class="p-2 border border-slate-200 font-medium <?= $prod['has_activity'] ? 'text-slate-800' : 'text-slate-400' ?>">
+                                            <tr class="hover:bg-slate-50/80 transition">
+                                                <td class="p-2 border border-slate-200 font-medium text-slate-800">
                                                     <?= $this->text->e($prod['name']) ?>
                                                 </td>
                                                 <td class="p-2 border border-slate-200 text-center">
                                                     <?= $prod['planned_tasks'] ?>
                                                 </td>
                                                 <td class="p-2 border border-slate-200 text-center">
-                                                    <span class="<?= $prod['has_activity'] ? 'font-semibold text-slate-800' : 'text-slate-400' ?>"><?= $prod['concluded_tasks'] ?></span>
+                                                    <span class="font-semibold text-slate-800"><?= $prod['concluded_tasks'] ?></span>
                                                     <span class="text-slate-400">/<?= $prod['total_tasks'] ?></span>
                                                 </td>
-                                                <td class="p-2 border border-slate-200 text-center <?= $prod['has_activity'] ? 'font-bold text-slate-800' : 'text-slate-400' ?>">
+                                                <td class="p-2 border border-slate-200 text-center font-bold text-slate-800">
                                                     <?= $prod['points'] ?> <?= t('Ponto(s)') ?>
                                                 </td>
                                             </tr>

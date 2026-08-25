@@ -18,8 +18,8 @@
         <div class="flex items-center gap-2 mt-4 flex-wrap">
             <span class="text-xs font-semibold text-slate-500 uppercase"><?= t('Projetos') ?>:</span>
             <?php foreach ($available_projects as $proj): ?>
-                <a href="<?= $this->url->href('ReportController', 'project', array('project_tag_id' => $proj['id'])) ?>"
-                   class="text-xs px-3 py-1 rounded-full border transition <?= $selected_project == $proj['id'] ? 'bg-primary-600 text-white border-primary-600 font-bold shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300' ?>">
+                <a href="<?= $this->url->href('ReportController', 'project', array('project_id' => $proj['id'])) ?>"
+                   class="text-xs px-3 py-1 rounded-full border transition <?= $selected_project === $proj['id'] ? 'bg-primary-600 text-white! border-primary-600 font-bold shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300' ?>">
                     <?= $this->text->e($proj['name']) ?>
                 </a>
             <?php endforeach ?>
@@ -58,7 +58,7 @@
         </div>
 
         <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col">
-            <span class="text-xs font-semibold text-primary-500 uppercase tracking-wider"><?= t('Total de Pontos (SP)') ?></span>
+            <span class="text-xs font-semibold text-primary-500 uppercase tracking-wider"><?= t('Total de Pontos') ?></span>
             <div class="flex items-baseline gap-1 mt-1">
                 <span class="text-2xl font-bold text-slate-800"><?= $tasks['points'] ?></span>
                 <span class="text-xs font-normal text-primary-500">(média <?= $tasks['avg'] ?>/task)</span>
@@ -130,7 +130,16 @@
                                     </a>
                                 </td>
                                 <td class="p-2 border border-slate-200 truncate text-slate-700">
-                                    <?= $this->text->e($task['owner_name']) ?>
+                                    <?php if (!empty($task['owner_id'])): ?>
+                                        <a href="<?= $this->url->href('ReportController', 'user', array('user_id' => $task['owner_id'])) ?>"
+                                           class="text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1 font-medium"
+                                           title="<?= t('Ver relatório de') ?> <?= $this->text->e($task['owner_name']) ?>">
+                                            <span><?= $this->text->e($task['owner_name']) ?></span>
+                                            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        </a>
+                                    <?php else: ?>
+                                        <span class="text-slate-400"><?= $this->text->e($task['owner_name']) ?></span>
+                                    <?php endif ?>
                                 </td>
                                 <td class="p-2 border text-center border-slate-200">
                                     <?php if ($task['planned']): ?>

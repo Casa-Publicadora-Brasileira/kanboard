@@ -358,6 +358,10 @@ class OverviewReportModel extends Base
 
                 $pTasks = $projectTaskMap[$projId][$prodId] ?? [];
                 $totalPTasks = count($pTasks);
+                if ($totalPTasks === 0) {
+                    continue;
+                }
+
                 $plannedPTasks = count(array_filter($pTasks, fn($t) => $t['is_planned']));
                 $concludedPTasks = count(array_filter($pTasks, fn($t) => (int) $t['column_id'] === 5));
                 $pointsPTasks = (float) array_sum(array_column($pTasks, 'score'));
@@ -375,7 +379,7 @@ class OverviewReportModel extends Base
                     'concluded_tasks' => $concludedPTasks,
                     'completion_rate' => $completionRate,
                     'points'          => $pointsPTasks,
-                    'has_activity'    => $totalPTasks > 0,
+                    'has_activity'    => true,
                 ];
             }
 
@@ -405,9 +409,6 @@ class OverviewReportModel extends Base
             }
 
             usort($productsData, function ($a, $b) {
-                if ($a['has_activity'] !== $b['has_activity']) {
-                    return $b['has_activity'] <=> $a['has_activity'];
-                }
                 if ($a['total_tasks'] !== $b['total_tasks']) {
                     return $b['total_tasks'] <=> $a['total_tasks'];
                 }

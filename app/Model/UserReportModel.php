@@ -98,8 +98,8 @@ class UserReportModel extends Base
             ->eq('project_id', 1)
             ->eq('owner_id', $userId)
             ->eq('is_active', 1)
-            ->desc('score')
             ->desc('column_id')
+            ->desc('score')
             ->findAll();
     }
 
@@ -263,7 +263,10 @@ class UserReportModel extends Base
             if (!isset($taskProjects[$taskId])) {
                 $projectEnum = ProjectTagEnum::tryFrom($tagId);
                 if ($projectEnum) {
-                    $taskProjects[$taskId] = $projectEnum->label();
+                    $taskProjects[$taskId] = [
+                        'id'   => $projectEnum->value,
+                        'name' => $projectEnum->label(),
+                    ];
                 }
             }
 
@@ -276,21 +279,26 @@ class UserReportModel extends Base
         $groupedTasks = [];
         foreach ($tasks as $task) {
             $taskId = $task['id'];
-            $projectName = $taskProjects[$taskId] ?? 'Outros / Não Especificado';
-            $groupedTasks[$projectName][] = $task;
+            $projectInfo = $taskProjects[$taskId] ?? ['id' => 0, 'name' => 'Outros / Não Especificado'];
+            $projectName = $projectInfo['name'];
+            $groupedTasks[$projectName]['project_id'] = $projectInfo['id'];
+            $groupedTasks[$projectName]['tasks'][] = $task;
         }
 
         $projectGroups = [];
-        foreach ($groupedTasks as $projectName => $projectTasks) {
+        foreach ($groupedTasks as $projectName => $data) {
+            $projectTasks = $data['tasks'];
+            $projectId = $data['project_id'];
             $projectTotalTasks = count($projectTasks);
             [$projectTotalPoints] = $this->calculateTaskPoints($projectTasks);
             [, $projectConcludedTasks] = $this->calculateCompletionStats($projectTasks);
 
             $projectGroups[] = [
-                'title'  => $projectName,
-                'tasks'  => "{$projectConcludedTasks}/{$projectTotalTasks}",
-                'points' => $projectTotalPoints,
-                'items'  => array_map(function ($task) use ($taskProducts) {
+                'project_id' => $projectId,
+                'title'      => $projectName,
+                'tasks'      => "{$projectConcludedTasks}/{$projectTotalTasks}",
+                'points'     => $projectTotalPoints,
+                'items'      => array_map(function ($task) use ($taskProducts) {
                     return [
                         'number'   => $task['id'],
                         'title'    => $task['title'],

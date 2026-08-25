@@ -24,4 +24,15 @@ enum ProjectTagEnum: int
             self::SOLUCOES_EDUCACIONAIS => 'Soluções Educacionais',
         };
     }
+
+    /**
+     * Retorna todos os casos formatados em array [id, name]
+     */
+    public static function toArray(): array
+    {
+        return array_map(fn (self $case) => [
+            'id'   => $case->value,
+            'name' => $case->label(),
+        ], self::cases());
+    }
 }

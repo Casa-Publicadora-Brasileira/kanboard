@@ -15,37 +15,18 @@ use Kanboard\Enum\ProductTagEnum;
 class ProjectReportModel extends Base
 {
     /**
-     * Get list of all available project tags
-     *
-     * @access public
-     * @return array
-     */
-    public function getAvailableProjects(): array
-    {
-        $projects = [];
-        foreach (ProjectTagEnum::cases() as $case) {
-            $projects[] = [
-                'id'    => $case->value,
-                'name'  => $case->label(),
-            ];
-        }
-        return $projects;
-    }
-
-    /**
      * Get report data for a specific project tag
      *
      * @access public
-     * @param  int $projectTagId
+     * @param  int $project_id
      * @return array
      */
-    public function getReportData(int $projectTagId): array
+    public function getReportData(int $project_id): array
     {
-        $projectEnum = ProjectTagEnum::tryFrom($projectTagId);
-        $projectName = $projectEnum ? $projectEnum->label() : t('Desconhecido');
+        $projectName = ProjectTagEnum::tryFrom($project_id)->label();
 
         $sprintData = $this->getCurrentSprintPeriod();
-        $tasks = $this->fetchProjectTasks($projectTagId);
+        $tasks = $this->fetchProjectTasks($project_id);
 
         $tasks = $this->assignTaskPlanningStatus($tasks, $sprintData['monday_end']);
         $unexpectedCount = count(array_filter($tasks, fn($task) => !$task['is_planned']));
@@ -56,7 +37,7 @@ class ProjectReportModel extends Base
         [$features, $bugs, $hotfixes] = $this->calculateTaskCategories($tasks);
 
         return [
-            'project_id'   => $projectTagId,
+            'project_id'   => $project_id,
             'project_name' => $projectName,
             'sprint'       => $sprintData['sprint'],
             'period'       => $sprintData['label'],
@@ -118,17 +99,17 @@ class ProjectReportModel extends Base
     {
         return $this->db->table(TaskModel::TABLE)
             ->columns(
-                TaskModel::TABLE.'.*',
+                TaskModel::TABLE . '.*',
                 'ua.name AS owner_name',
                 'ua.username AS owner_username'
             )
             ->join('task_has_tags', 'task_id', 'id')
             ->left(UserModel::TABLE, 'ua', 'id', TaskModel::TABLE, 'owner_id')
-            ->eq(TaskModel::TABLE.'.project_id', 1)
+            ->eq(TaskModel::TABLE . '.project_id', 1)
             ->eq('task_has_tags.tag_id', $projectTagId)
-            ->eq(TaskModel::TABLE.'.is_active', 1)
-            ->desc(TaskModel::TABLE.'.score')
-            ->desc(TaskModel::TABLE.'.column_id')
+            ->eq(TaskModel::TABLE . '.is_active', 1)
+            ->desc(TaskModel::TABLE . '.column_id')
+            ->desc(TaskModel::TABLE . '.score')
             ->findAll();
     }
 
@@ -201,13 +182,8 @@ class ProjectReportModel extends Base
     private function calculateTaskPoints(array $tasks): array
     {
         $totalTasks = count($tasks);
-        $totalPoints = 0;
-
-        foreach ($tasks as $task) {
-            $totalPoints += (float) $task['score'];
-        }
-
-        $averagePoints = $totalTasks > 0 ? round($totalPoints / $totalTasks, 1) : 0;
+        $totalPoints = (float) array_sum(array_column($tasks, 'score'));
+        $averagePoints = $totalTasks > 0 ? round($totalPoints / $totalTasks, 1) : 0.0;
 
         return [$totalPoints, $averagePoints];
     }
@@ -296,7 +272,8 @@ class ProjectReportModel extends Base
                     return [
                         'number'         => $task['id'],
                         'title'          => $task['title'],
-                        'owner_name'     => !empty($task['owner_name']) ? $task['owner_name'] : ($task['owner_username'] ?? t('Não atribuído')),
+                        'owner_id'       => (int) ($task['owner_id'] ?? 0),
+                        'owner_name'     => !empty($task['owner_name']) ? $task['owner_name'] : ($task['owner_username'] ?? t('-')),
                         'owner_username' => $task['owner_username'] ?? '',
                         'planned'        => $task['is_planned'] ?? true,
                         'point'          => $task['score'] ?: 0,

@@ -283,8 +283,7 @@ class RouteProvider implements ServiceProviderInterface
             $container['route']->addRoute('report/overview', 'ReportController', 'overview');
             $container['route']->addRoute('report/user', 'ReportController', 'user');
             $container['route']->addRoute('report/user/:user_id', 'ReportController', 'user');
-            $container['route']->addRoute('report/project', 'ReportController', 'project');
-            $container['route']->addRoute('report/project/:project_tag_id', 'ReportController', 'project');
+            $container['route']->addRoute('report/project/:project_id', 'ReportController', 'project');
         }
 
         return $container;

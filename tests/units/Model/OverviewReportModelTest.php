@@ -182,16 +182,16 @@ class OverviewReportModelTest extends Base
         $this->assertEquals(1, $cpbProvas['concluded_tasks']);
         $this->assertEquals(8.0, $cpbProvas['total_points']);
 
-        // Check that products with activity are sorted first
+        // Check that only products with activity are returned
+        $this->assertCount(1, $cpbProvas['products']);
         $firstProduct = $cpbProvas['products'][0];
         $this->assertTrue($firstProduct['has_activity']);
         $this->assertEquals('CPB Provas', $firstProduct['name']);
         $this->assertEquals(1, $firstProduct['total_tasks']);
 
-        // Check subsequent product with 0 activity
-        $inactiveProduct = $cpbProvas['products'][1];
-        $this->assertFalse($inactiveProduct['has_activity']);
-        $this->assertEquals(0, $inactiveProduct['total_tasks']);
+        // Check project without tasks has empty products list
+        $projectWithoutTasks = array_values(array_filter($data['projects'], fn($p) => $p['id'] !== 233))[0];
+        $this->assertEmpty($projectWithoutTasks['products']);
     }
 
     public function testRenderOverviewTemplate()
@@ -201,13 +201,15 @@ class OverviewReportModelTest extends Base
 
         $html = $this->container['template']->render('report/overview', $data);
 
-        $this->assertStringContainsString('Visão Geral de Operações (Portfólio)', $html);
+        $this->assertStringContainsString('Visão Geral da Sprint', $html);
         $this->assertStringContainsString('Concluídos', $html);
         $this->assertStringContainsString('Total de Pontos', $html);
         $this->assertStringContainsString('Taxa de Interrupção', $html);
         $this->assertStringContainsString('Ocupação da Equipe', $html);
-        $this->assertStringContainsString('Capacidade &amp; Gestão da Equipe', $html);
+        $this->assertStringContainsString('Desenvolvedores', $html);
+        $this->assertStringContainsString('Líderes de Produto', $html);
         $this->assertStringContainsString('Portfólio de Projetos e Produtos', $html);
         $this->assertStringContainsString('Planejados', $html);
+        $this->assertStringContainsString('Nenhum produto trabalhado nesta sprint.', $html);
     }
 }
