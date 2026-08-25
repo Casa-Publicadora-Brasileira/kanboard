@@ -190,4 +190,21 @@ class OverviewReportModelTest extends Base
         $this->assertEquals(0, $aces['concluded_tasks']);
         $this->assertEquals(0.0, $aces['total_points']);
     }
+
+    public function testRenderOverviewTemplate()
+    {
+        $overviewReportModel = new OverviewReportModel($this->container);
+        $data = $overviewReportModel->getOverviewData();
+
+        $html = $this->container['template']->render('report/overview', $data);
+
+        $this->assertStringContainsString('Visão Geral de Operações (Portfólio)', $html);
+        $this->assertStringContainsString('Tarefas Entregues', $html);
+        $this->assertStringContainsString('Total de Pontos', $html);
+        $this->assertStringContainsString('Taxa de Interrupção', $html);
+        $this->assertStringContainsString('Ocupação da Equipe', $html);
+        $this->assertStringContainsString('Capacidade &amp; Gestão da Equipe', $html);
+        $this->assertStringContainsString('Portfólio de Projetos e Produtos', $html);
+    }
 }
+
