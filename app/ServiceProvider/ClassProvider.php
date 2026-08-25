@@ -48,6 +48,7 @@ class ClassProvider implements ServiceProviderInterface
             'LastLoginModel',
             'LinkModel',
             'NotificationModel',
+            'OverviewReportModel',
             'PasswordResetModel',
             'PredefinedTaskDescriptionModel',
             'ProjectModel',
