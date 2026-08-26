@@ -41,7 +41,7 @@ class TaskCategoryFilter extends BaseFilter implements FilterInterface
         } elseif ($this->value === 'none') {
             $this->query->eq(TaskModel::TABLE.'.category_id', 0);
         } else {
-            $this->query->eq(CategoryModel::TABLE.'.name', $this->value);
+            $this->query->ilike(CategoryModel::TABLE.'.name', '%'.$this->value.'%');
         }
 
         return $this;

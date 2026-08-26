@@ -102,13 +102,12 @@ class LexerBuilder
      */
     public function build($input)
     {
-        $tokens = $this->lexer->tokenize($input);
-
-        foreach ($tokens as $token => $values) {
-            if (isset($this->filters[$token])) {
-                $this->applyFilters($this->filters[$token], $values);
-            }
+        if (empty($input) || trim($input) === '') {
+            return $this->queryBuilder;
         }
+
+        $parser = new LexerParser();
+        $parser->parseAndExecute($input, $this->query, $this->filters, $this->lexer->getDefaultToken());
 
         return $this->queryBuilder;
     }

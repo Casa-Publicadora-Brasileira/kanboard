@@ -70,6 +70,17 @@ class Lexer
     }
 
     /**
+     * Get default token
+     *
+     * @access public
+     * @return string
+     */
+    public function getDefaultToken()
+    {
+        return $this->defaultToken;
+    }
+
+    /**
      * Tokenize input string
      *
      * @access public
