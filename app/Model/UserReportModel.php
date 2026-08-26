@@ -299,13 +299,16 @@ class UserReportModel extends Base
                 'tasks'      => "{$projectConcludedTasks}/{$projectTotalTasks}",
                 'points'     => $projectTotalPoints,
                 'items'      => array_map(function ($task) use ($taskProducts) {
+                    $dateMoved = !empty($task['date_moved']) ? (int) $task['date_moved'] : (int) $task['date_creation'];
                     return [
-                        'number'   => $task['id'],
-                        'title'    => $task['title'],
-                        'products' => $taskProducts[$task['id']] ?? [],
-                        'planned'  => $task['is_planned'] ?? true,
-                        'point'    => $task['score'] ?: 0,
-                        'status'   => (int) $task['column_id'],
+                        'number'     => $task['id'],
+                        'title'      => $task['title'],
+                        'products'   => $taskProducts[$task['id']] ?? [],
+                        'planned'    => $task['is_planned'] ?? true,
+                        'point'      => $task['score'] ?: 0,
+                        'status'     => (int) $task['column_id'],
+                        'is_hotfix'  => (int) ($task['category_id'] ?? 0) === 33,
+                        'date_moved' => $dateMoved,
                     ];
                 }, $projectTasks)
             ];

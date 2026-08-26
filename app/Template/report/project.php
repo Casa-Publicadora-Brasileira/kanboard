@@ -6,12 +6,14 @@
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">
                 <?= t('Desempenho do Projeto') ?>: <span class="text-primary-600"><?= $this->text->e($project_name) ?></span>
             </h2>
-            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
-                <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
-                <span>Sprint <?= $sprint ?></span>
-                <span class="text-primary-300">•</span>
-                <span class="text-primary-500 font-normal"><?= $period ?></span>
-            </span>
+            <a href="<?= $this->url->href('ReportController', 'overview') ?>">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
+                    <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
+                    <span>Sprint <?= $sprint ?></span>
+                    <span class="text-primary-300">•</span>
+                    <span class="text-primary-500 font-normal"><?= $period ?></span>
+                </span>
+            </a>
         </div>
 
         <!-- Seletor de Projetos -->
@@ -19,7 +21,7 @@
             <span class="text-xs font-semibold text-slate-500 uppercase"><?= t('Projetos') ?>:</span>
             <?php foreach ($available_projects as $proj): ?>
                 <a href="<?= $this->url->href('ReportController', 'project', array('project_id' => $proj['id'])) ?>"
-                   class="text-xs px-3 py-1 rounded-full border transition <?= $selected_project === $proj['id'] ? 'bg-primary-600 text-white! border-primary-600 font-bold shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300' ?>">
+                    class="text-xs px-3 py-1 rounded-full border transition <?= $selected_project === $proj['id'] ? 'bg-primary-600 text-white! border-primary-600 font-bold shadow-xs' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300' ?>">
                     <?= $this->text->e($proj['name']) ?>
                 </a>
             <?php endforeach ?>
@@ -124,18 +126,20 @@
                             <tr>
                                 <td class="p-2 border border-slate-200 truncate">
                                     <a href="<?= $this->url->href('TaskViewController', 'show', array('task_id' => $task['number'])) ?>"
-                                       class="text-primary-900 truncate hover:underline"
-                                       title="<?= $this->text->e($task['title']) ?>">
+                                        class="text-primary-900 truncate hover:underline"
+                                        title="<?= $this->text->e($task['title']) ?>">
                                         <strong>#<?= $task['number'] ?></strong> - <?= $this->text->e($task['title']) ?>
                                     </a>
                                 </td>
                                 <td class="p-2 border border-slate-200 truncate text-slate-700">
                                     <?php if (!empty($task['owner_id'])): ?>
                                         <a href="<?= $this->url->href('ReportController', 'user', array('user_id' => $task['owner_id'])) ?>"
-                                           class="text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1 font-medium"
-                                           title="<?= t('Ver relatório de') ?> <?= $this->text->e($task['owner_name']) ?>">
+                                            class="text-primary-700 hover:text-primary-900 hover:underline inline-flex items-center gap-1 font-medium"
+                                            title="<?= t('Ver relatório de') ?> <?= $this->text->e($task['owner_name']) ?>">
                                             <span><?= $this->text->e($task['owner_name']) ?></span>
-                                            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                            <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
                                         </a>
                                     <?php else: ?>
                                         <span class="text-slate-400"><?= $this->text->e($task['owner_name']) ?></span>

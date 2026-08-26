@@ -3,12 +3,14 @@
     <div class="border-b-2 border-primary-500 pb-1 mb-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight"><?= t('Desempenho Técnico Individual') ?></h2>
-            <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
-                <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
-                <span>Sprint <?= $sprint ?></span>
-                <span class="text-primary-300">•</span>
-                <span class="text-primary-500 font-normal"><?= $period ?></span>
-            </span>
+            <a href="<?= $this->url->href('ReportController', 'overview') ?>">
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
+                    <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
+                    <span>Sprint <?= $sprint ?></span>
+                    <span class="text-primary-300">•</span>
+                    <span class="text-primary-500 font-normal"><?= $period ?></span>
+                </span>
+            </a>
         </div>
         <h3 class="text-lg font-semibold text-slate-800 m-0!">
             <strong>#<?= $user_id ?></strong> <?= $this->text->e($user['name'] ?: $user['username']) ?>
@@ -90,10 +92,12 @@
                 <div class="flex items-center gap-2">
                     <?php if (!empty($team['project_id'])): ?>
                         <a href="<?= $this->url->href('ReportController', 'project', array('project_id' => $team['project_id'])) ?>"
-                           class="text-sm font-bold text-primary-800 hover:text-primary-600 hover:underline uppercase tracking-wide m-0 inline-flex items-center gap-1.5"
-                           title="<?= t('Ver relatório do projeto') ?> <?= $this->text->e($team['title']) ?>">
+                            class="text-sm font-bold text-primary-800 hover:text-primary-600 hover:underline uppercase tracking-wide m-0 inline-flex items-center gap-1.5"
+                            title="<?= t('Ver relatório do projeto') ?> <?= $this->text->e($team['title']) ?>">
                             <span><?= $this->text->e($team['title']) ?></span>
-                            <svg class="w-3.5 h-3.5 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <svg class="w-3.5 h-3.5 text-primary-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
                         </a>
                     <?php else: ?>
                         <h4 class="text-sm font-bold text-primary-800 uppercase tracking-wide m-0"><?= $this->text->e($team['title']) ?></h4>
@@ -113,22 +117,31 @@
                 <table class="w-full table-fixed border-collapse text-xs">
                     <thead>
                         <tr class="text-primary-700 text-left">
-                            <th class="w-5/12 p-2 border bg-primary-50! border-primary-100!"><?= t('Tarefa') ?></th>
+                            <th class="w-4/12 p-2 border bg-primary-50! border-primary-100!"><?= t('Tarefa') ?></th>
                             <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Produto') ?></th>
-                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Planejado') ?></th>
+                            <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Planejado') ?></th>
                             <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Complexidade') ?></th>
+                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Na coluna desde') ?></th>
                             <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Status') ?></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         <?php foreach ($team['items'] as $task): ?>
+                            <?php
+                            $carbonMoved = !empty($task['date_moved']) ? \Carbon\Carbon::createFromTimestamp($task['date_moved'])->locale('pt_BR') : null;
+                            ?>
                             <tr>
                                 <td class="p-2 border border-slate-200 truncate">
-                                    <a href="<?= $this->url->href('TaskViewController', 'show', array('task_id' => $task['number'])) ?>"
-                                       class="text-primary-900 truncate hover:underline"
-                                       title="<?= $this->text->e($task['title']) ?>">
-                                        <strong>#<?= $task['number'] ?></strong> - <?= $this->text->e($task['title']) ?>
-                                    </a>
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <?php if (!empty($task['is_hotfix'])): ?>
+                                            <span class="inline-flex items-center bg-red-100 text-red-700 border border-red-200 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 uppercase tracking-wider"><?= t('Hotfix') ?></span>
+                                        <?php endif ?>
+                                        <a href="<?= $this->url->href('TaskViewController', 'show', array('task_id' => $task['number'])) ?>"
+                                            class="text-primary-900 truncate hover:underline"
+                                            title="<?= $this->text->e($task['title']) ?>">
+                                            <strong>#<?= $task['number'] ?></strong> - <?= $this->text->e($task['title']) ?>
+                                        </a>
+                                    </div>
                                 </td>
                                 <td class="p-2 border text-center border-slate-200 truncate"><?= $this->text->e(implode(', ', $task["products"])) ?></td>
                                 <td class="p-2 border text-center border-slate-200">
@@ -139,6 +152,14 @@
                                     <?php endif ?>
                                 </td>
                                 <td class="p-2 border text-center border-slate-200"><?= $task['point'] ?> <?= t('Ponto(s)') ?></td>
+                                <td class="p-2 border text-center border-slate-200 text-slate-700 truncate">
+                                    <?php if ($carbonMoved): ?>
+                                        <span class="font-medium"><?= $carbonMoved->format('d/m/Y') ?></span>
+                                        <span class="text-[11px] text-slate-400 font-normal block sm:inline sm:ml-1">(<?= $carbonMoved->diffForHumans() ?>)</span>
+                                    <?php else: ?>
+                                        <span class="text-slate-400">-</span>
+                                    <?php endif ?>
+                                </td>
                                 <td class="p-2 border text-center border-slate-200">
                                     <?php if ($task['status'] === 5): ?>
                                         <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold"><?= t('Concluído') ?></span>

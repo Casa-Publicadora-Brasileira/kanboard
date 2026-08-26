@@ -1,6 +1,6 @@
 <section id="main">
     <div class="page-header">
-        <ul>
+        <ul>            
             <?php if ($this->user->hasAccess('ProjectCreationController', 'create')): ?>
                 <li>
                     <?= $this->modal->medium('plus', t('New project'), 'ProjectCreationController', 'create') ?>
@@ -15,8 +15,17 @@
                 <?= $this->url->icon('folder', t('Project management'), 'ProjectListController', 'show') ?>
             </li>
             <li>
+                <?= $this->url->icon('calendar-o', t('Minha sprint'), 'ReportController', 'user') ?>
+            </li>            
+            <li>
                 <?= $this->modal->medium('dashboard', t('My activity stream'), 'ActivityController', 'user') ?>
             </li>
+            <?php if ($this->user->isAdmin()): ?>
+                <li>
+                    <?= $this->url->icon('newspaper-o', t('Sprint'), 'ReportController', 'overview') ?>
+                </li>
+            <?php endif ?>
+
             <?= $this->hook->render('template:dashboard:page-header:menu', array('user' => $user)) ?>
         </ul>
     </div>
