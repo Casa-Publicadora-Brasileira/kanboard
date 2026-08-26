@@ -269,6 +269,7 @@ class ProjectReportModel extends Base
                 'tasks'  => "{$productConcludedTasks}/{$productTotalTasks}",
                 'points' => $productTotalPoints,
                 'items'  => array_map(function ($task) {
+                    $dateMoved = !empty($task['date_moved']) ? (int) $task['date_moved'] : (int) $task['date_creation'];
                     return [
                         'number'         => $task['id'],
                         'title'          => $task['title'],
@@ -278,6 +279,8 @@ class ProjectReportModel extends Base
                         'planned'        => $task['is_planned'] ?? true,
                         'point'          => $task['score'] ?: 0,
                         'status'         => (int) $task['column_id'],
+                        'is_hotfix'      => (int) ($task['category_id'] ?? 0) === 33,
+                        'date_moved'     => $dateMoved,
                     ];
                 }, $items)
             ];

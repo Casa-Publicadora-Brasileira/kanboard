@@ -6,14 +6,24 @@
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">
                 <?= t('Desempenho do Projeto') ?>: <span class="text-primary-600"><?= $this->text->e($project_name) ?></span>
             </h2>
-            <a href="<?= $this->url->href('ReportController', 'overview') ?>">
-                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
-                    <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
-                    <span>Sprint <?= $sprint ?></span>
-                    <span class="text-primary-300">•</span>
-                    <span class="text-primary-500 font-normal"><?= $period ?></span>
-                </span>
-            </a>
+            <div class="flex items-center gap-2 flex-wrap">
+                <a href="<?= $this->url->href('BoardViewController', 'show', array('project_id' => $selected_project ?: 1)) ?>"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 border rounded-full border-primary-200 px-3 py-1 shadow-xs transition"
+                    title="<?= t('Ir para o Quadro') ?>">
+                    <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                    </svg>
+                    <span><?= t('Voltar ao Quadro') ?></span>
+                </a>
+                <a href="<?= $this->url->href('ReportController', 'overview') ?>">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
+                        <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
+                        <span>Sprint <?= $sprint ?></span>
+                        <span class="text-primary-300">•</span>
+                        <span class="text-primary-500 font-normal"><?= $period ?></span>
+                    </span>
+                </a>
+            </div>
         </div>
 
         <!-- Seletor de Projetos -->
@@ -114,22 +124,31 @@
                 <table class="w-full table-fixed border-collapse text-xs">
                     <thead>
                         <tr class="text-primary-700 text-left">
-                            <th class="w-5/12 p-2 border bg-primary-50! border-primary-100!"><?= t('Tarefa') ?></th>
+                            <th class="w-4/12 p-2 border bg-primary-50! border-primary-100!"><?= t('Tarefa') ?></th>
                             <th class="w-2/12 p-2 border bg-primary-50! border-primary-100!"><?= t('Responsável') ?></th>
-                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Planejado') ?></th>
+                            <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Planejado') ?></th>
                             <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Complexidade') ?></th>
-                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Status') ?></th>
+                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Na coluna desde') ?></th>
+                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Estágio') ?></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
                         <?php foreach ($prodGroup['items'] as $task): ?>
+                            <?php
+                            $carbonMoved = !empty($task['date_moved']) ? \Carbon\Carbon::createFromTimestamp($task['date_moved'])->locale('pt_BR') : null;
+                            ?>
                             <tr>
                                 <td class="p-2 border border-slate-200 truncate">
-                                    <a href="<?= $this->url->href('TaskViewController', 'show', array('task_id' => $task['number'])) ?>"
-                                        class="text-primary-900 truncate hover:underline"
-                                        title="<?= $this->text->e($task['title']) ?>">
-                                        <strong>#<?= $task['number'] ?></strong> - <?= $this->text->e($task['title']) ?>
-                                    </a>
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <?php if (!empty($task['is_hotfix'])): ?>
+                                            <span class="inline-flex items-center bg-red-100 text-red-700 border border-red-200 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 uppercase tracking-wider"><?= t('Hotfix') ?></span>
+                                        <?php endif ?>
+                                        <a href="<?= $this->url->href('TaskViewController', 'show', array('task_id' => $task['number'])) ?>"
+                                            class="text-primary-900 truncate hover:underline"
+                                            title="<?= $this->text->e($task['title']) ?>">
+                                            <strong>#<?= $task['number'] ?></strong> - <?= $this->text->e($task['title']) ?>
+                                        </a>
+                                    </div>
                                 </td>
                                 <td class="p-2 border border-slate-200 truncate text-slate-700">
                                     <?php if (!empty($task['owner_id'])): ?>
@@ -153,6 +172,14 @@
                                     <?php endif ?>
                                 </td>
                                 <td class="p-2 border text-center border-slate-200"><?= $task['point'] ?> <?= t('Ponto(s)') ?></td>
+                                <td class="p-2 border text-center border-slate-200 text-slate-700 truncate">
+                                    <?php if ($carbonMoved): ?>
+                                        <span class="font-medium"><?= $carbonMoved->format('d/m/Y') ?></span>
+                                        <span class="text-[11px] text-slate-400 font-normal block sm:inline sm:ml-1">(<?= $carbonMoved->diffForHumans() ?>)</span>
+                                    <?php else: ?>
+                                        <span class="text-slate-400">-</span>
+                                    <?php endif ?>
+                                </td>
                                 <td class="p-2 border text-center border-slate-200">
                                     <?php if ($task['status'] === 5): ?>
                                         <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold"><?= t('Concluído') ?></span>

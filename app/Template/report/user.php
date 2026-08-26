@@ -3,14 +3,24 @@
     <div class="border-b-2 border-primary-500 pb-1 mb-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight"><?= t('Desempenho Técnico Individual') ?></h2>
-            <a href="<?= $this->url->href('ReportController', 'overview') ?>">
-                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
-                    <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
-                    <span>Sprint <?= $sprint ?></span>
-                    <span class="text-primary-300">•</span>
-                    <span class="text-primary-500 font-normal"><?= $period ?></span>
-                </span>
-            </a>
+            <div class="flex items-center gap-2 flex-wrap">
+                <a href="<?= $this->url->href('BoardViewController', 'show', array('project_id' => 1)) ?>"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-700 bg-primary-50 hover:bg-primary-100 border rounded-full border-primary-200 px-3 py-1 shadow-xs transition"
+                    title="<?= t('Ir para o Quadro') ?>">
+                    <svg class="w-3.5 h-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+                    </svg>
+                    <span><?= t('Voltar ao Quadro') ?></span>
+                </a>
+                <a href="<?= $this->url->href('ReportController', 'overview') ?>">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 border rounded-full border-slate-200 px-3 py-1 shadow-sm">
+                        <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
+                        <span>Sprint <?= $sprint ?></span>
+                        <span class="text-primary-300">•</span>
+                        <span class="text-primary-500 font-normal"><?= $period ?></span>
+                    </span>
+                </a>
+            </div>
         </div>
         <h3 class="text-lg font-semibold text-slate-800 m-0!">
             <strong>#<?= $user_id ?></strong> <?= $this->text->e($user['name'] ?: $user['username']) ?>
@@ -122,7 +132,7 @@
                             <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Planejado') ?></th>
                             <th class="w-1/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Complexidade') ?></th>
                             <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Na coluna desde') ?></th>
-                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Status') ?></th>
+                            <th class="w-2/12 p-2 border text-center! bg-primary-50! border-primary-100!"><?= t('Estágio') ?></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
